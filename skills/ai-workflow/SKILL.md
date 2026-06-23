@@ -97,7 +97,10 @@ assume you are starting fresh.
    onto missing upstream work, and steer back.
 
 `docs/STATE.md` is the heartbeat. `docs/GATES.md` is the gate ledger. Together
-they are the source of truth for "where are we." Keep both current.
+they are the source of truth for "where are we." Keep both current. They're
+append-only and merge-friendly by design, so on a **shared repo with several
+people**, reconcile on pull and let each gate entry name *who* approved — the
+ledger is the team's shared truth, not one operator's memory.
 
 ## How to run any stage — the universal loop
 
@@ -150,6 +153,45 @@ When a stage offers the human a *choice between options* (stages 3, 5, 6
 especially), generate **N genuinely distinct directions with trade-offs**, lead
 with a recommendation, and let the human pick. Do not present one option
 disguised as a decision.
+
+## When a gate must re-open — pivots and late learning
+
+The pipeline flows forward, but real projects learn late: Stack may reveal the
+Scope is infeasible, Instrumentation may kill a feature on cost, the build may
+falsify an assumption the PRD rested on. When a *later* stage invalidates an
+*earlier* approved gate, don't silently patch around it and don't plow on — that
+is how a project ends up shipping something nobody actually approved.
+
+Instead: **stop, name what changed, and re-open the affected gate.** Record it in
+`docs/GATES.md` as a re-opening (the new evidence that forced it, the prior
+decision it overturns), update the upstream artifact, and **cascade** — any
+downstream artifact that leaned on the overturned decision is flagged stale and
+revisited. Then get the human's re-approval before continuing. A re-opened gate
+is normal and healthy; a silently-contradicted one is exactly the corruption the
+ledger exists to prevent.
+
+## Sad paths — failures, blocks, and thin environments
+
+Things go wrong mid-stage, and how you handle the sad path is where trust is won
+or lost. One rule sits under all of it: **a gap is reported, never fabricated.**
+
+- **A fan-out worker fails, times out, or returns garbage.** Retry or replace it.
+  If a slice genuinely can't be completed, mark that part *partial / unverified*
+  in the artifact and flag it at the gate — never invent plausible content to
+  paper over the hole.
+- **An external step is blocked** (a provider signup that needs the human, access
+  you don't have). Set the stage or sub-task to `blocked` in `docs/STATE.md`,
+  state precisely what you need, and stop — don't fake past it.
+- **The environment is thin.** Degrade gracefully and *say which rung you're on*:
+
+  | Missing | Degrade to |
+  |---------|-----------|
+  | No subagents / Workflow | run the fan-out serially and smaller |
+  | No web access | mark research `*inferred*`, lean on the user for facts |
+  | No Figma | prototype in code, or as a described spec |
+  | No hosted CI / deploy target | a green **local** test run + a documented deploy plan counts as verified — `verified` ≠ `hosted-CI-green` |
+  | Weaker model | treat DoD checklists as presence checks; warn that depth may be shallow |
+  | A routed skill/provider absent or renamed | use the fallback named in the reference, or the closest equivalent — routed names are suggestions to verify at use, not guarantees |
 
 ## Operating model: Orchestrator-first
 

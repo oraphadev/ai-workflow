@@ -5,12 +5,12 @@
 
 ## Summary
 
-| Service | Provider | Purpose | Plan / Cost | Status |
-| --- | --- | --- | --- | --- |
-| `<Auth>` | `<provider>` | `<sign-in / sessions>` | `<Free / $X mo>` | `<active / planned>` |
-| `<Email>` | `<provider>` | `<transactional email>` | `<...>` | `<...>` |
-| `<Payments>` | `<provider>` | `<billing>` | `<...>` | `<...>` |
-| `<...>` | `<...>` | `<...>` | `<...>` | `<...>` |
+| Service | Provider | Purpose | Plan / Cost | Spend cap | Data residency | Teardown | Status |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| `<Auth>` | `<provider>` | `<sign-in / sessions>` | `<Free / $X mo>` | `<budget alert / cap, or n/a>` | `<region / jurisdiction>` | `<deprovision cmd>` | `<active / planned>` |
+| `<Email>` | `<provider>` | `<transactional email>` | `<...>` | `<...>` | `<...>` | `<...>` | `<...>` |
+| `<Payments>` | `<provider>` | `<billing>` | `<...>` | `<...>` | `<...>` | `<...>` | `<...>` |
+| `<...>` | `<...>` | `<...>` | `<...>` | `<...>` | `<...>` | `<...>` | `<...>` |
 
 ---
 
@@ -20,6 +20,9 @@
 - **Provider + rationale:** `<provider; why chosen over alternatives>`
 - **Status:** `<active / planned / deprecated>`
 - **Plan / cost:** `<tier, monthly cost, limits>`
+- **Spend cap / budget alert:** `<hard cap or alert threshold set, where; or "n/a — free tier only">`
+- **Data residency:** `<region/jurisdiction where data lives; ties to Scope privacy/PII note — LGPD/GDPR>`
+- **Teardown / rollback:** `<exact deprovision/rollback command or steps to remove this service cleanly>`
 
 ### Setup steps (runbook)
 
@@ -49,6 +52,9 @@
 - **Provider + rationale:** `<...>`
 - **Status:** `<...>`
 - **Plan / cost:** `<...>`
+- **Spend cap / budget alert:** `<...>`
+- **Data residency:** `<...>`
+- **Teardown / rollback:** `<...>`
 
 ### Setup steps (runbook)
 

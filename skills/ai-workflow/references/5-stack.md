@@ -32,6 +32,8 @@ Confirm the Prototyping gate has passed: `docs/GATES.md` should record acceptanc
 
 For every layer — frontend, backend, data, auth, infra — present a small set of viable options with honest trade-offs (maturity, ecosystem, hosting fit, learning curve, cost, lock-in). Lead with a recommendation per layer and say *why* it fits this scope, but keep at least one credible alternative live so the user can push back. The user decides each layer; you don't decide for them. This is the human-in-the-loop that defines the stage — the layers are the gate.
 
+**When the user is non-technical, translate the choice — don't dilute it.** For a non-technical founder, frame each layer in **plain-language consequences they actually own — cost, lock-in, and speed-to-build** — with a clear recommendation, and tuck the engineering trade-offs (maturity, ecosystem, peer requirements) behind a short "details" fold for whoever reviews it later. The accommodation is *presentation*, not abdication: it must stay a **real, recommended-and-confirmed decision** — you surface a credible alternative they could pick instead and they actively confirm, never a rubber-stamp where the AI picks and they only click yes. If they can't tell you *why* one option beats the other in their own terms, you haven't explained the consequences plainly enough — keep going until the choice is genuinely theirs.
+
 ### 2. Decide the five layers
 
 Drive each layer to a concrete decision, not a hand-wave:
@@ -41,6 +43,8 @@ Drive each layer to a concrete decision, not a hand-wave:
 - **Data** — database, ORM/query layer, cache (if any).
 - **Auth** — provider/approach (managed service vs. self-rolled, session vs. token).
 - **Infra / deploy / hosting** — where it runs, how it ships, the deploy target. The *shippable artifact* form depends on project type — a live URL, an npm/pip package, a compiled binary, a mobile app build (TestFlight/Play) — so name the artifact, not just "deploy".
+
+> **AI-native overlay — only if the product is AI-native.** Skip this entirely for a product that merely *has* an AI feature; engage it when the LLM *is* the product (a RAG app, an agent, a generation pipeline). Then the stack gains a sixth decision: the **model** (id, context window, fallback — sourced from `claude-api`, not memory), the **vector store / retrieval layer** (if it does RAG), and an explicit **cost-and-latency-per-query budget** so the unit economics are a decision, not a surprise at the bill. Treat these like any other layer — recommended with alternatives, chosen by the user at the gate.
 
 Each choice should trace back to a scope or prototype signal — a decision with no rationale is a decision you can't defend at the gate or revisit later. Keep choices compatible across layers (the ORM must support the database; the hosting must run the runtime); incompatibility surfaced now is cheap, surfaced at Harness time is expensive.
 
@@ -83,7 +87,7 @@ docs/stack/
 - [ ] All five layers (frontend, backend, data, auth, infra) decided by the user, each with a justification tied to scope or prototype.
 - [ ] Key libraries per domain chosen, each recorded with a pinned version and its purpose.
 - [ ] Versions and cross-layer compatibilities verified and recorded — no unversioned decisions.
-- [ ] AI/LLM model details (if any) sourced from `claude-api`, not memory.
+- [ ] AI/LLM model details (if any) sourced from `claude-api`, not memory — and for an **AI-native** product, the model + vector store + a cost/latency-per-query budget are decided.
 - [ ] `ARCHITECTURE.md` defines diagram + data model (elaborated from PRD entities) + folder structure + data flow.
 - [ ] All three deliverables written to `docs/stack/`, in English, following the templates.
 - [ ] Stack is concrete enough to provision services (Instrumentation) and scaffold the harness (Harness).

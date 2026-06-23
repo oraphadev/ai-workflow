@@ -12,7 +12,7 @@ You are not "writing the app" in one long session. You are running a loop, many 
 
 Everything from Stages 1–7 converges here — this is the stage that consumes all of it:
 
-- `docs/product/` — the user stories and MVP→v1 phasing that order the build.
+- `docs/product/` — the user stories and MVP→v1 phasing that order the build. For an **AI-native** product, this is also where the **eval-set / golden-set** lives (defined in Scope/PRD), which the offline-eval gate runs against before deploy.
 - `docs/prototype/` — the screens and flows each vertical slice realizes.
 - `docs/brand/` — design tokens to wire into the foundation (not re-decide).
 - `docs/stack/` — the chosen frameworks, runtime, and deploy target.
@@ -53,7 +53,11 @@ Every increment runs the same loop — and it is a **loop, not a one-shot pass**
    - **Tests** — unit and the slice's acceptance tests, genuinely exercising the slice, green.
    - **Lint** — zero new violations.
    - **Type-check** — clean (`tsc --noEmit` or the stack's equivalent).
+   - **Product security** — distinct from secrets hygiene: the Security agent threat-models the slice's authn/authz and its injection/abuse surface, verifying against the **abuse/misuse cases pulled from the PRD**, with **dependency scanning (SAST/SCA)** in the merge gate for `platform`/regulated slices. Light checklist for `throwaway`/`mvp`, must-be-green for `platform`/regulated.
+   - **Accessibility** — for any slice with UI, the UX/Design agent checks keyboard nav, contrast, and semantics (flexed by stakes — manual pass for `mvp`, automated + manual for `platform`).
    - The build compiles. Run these via `verification-before-completion` and read the actual output; a slice is not done because it "should" pass.
+
+   > **AI-native overlay — only if the product is AI-native.** For a slice that ships LLM/RAG behavior, add an **offline-eval gate before deploy**: run the slice against the **golden/eval set** (defined in Scope/PRD) and gate on retrieval metrics / faithfulness / regression against that set — a failing eval blocks the deploy exactly like a failing test. Skip this for non-AI products and non-AI slices.
 6. **Learn → refine (close the loop).** Two outcomes feed back here. If a gate failed or the acceptance criteria aren't met, loop back — fix and re-verify, iterating until green; you do not integrate a broken slice. If the slice is green, harvest what it taught: append learnings to `knowledge/` (an ADR, a pattern, an anti-pattern) and stage any prompt/skill refinements via `/harness-improve`. **The loop's exit condition:** the slice meets its acceptance criteria *and* every verification gate is green. Until then, keep iterating; once met, stop and present at the review gate.
 7. **Review, integrate, deploy.** Request review (`requesting-code-review`) against the spec's acceptance criteria with the gate evidence in hand. This is the human checkpoint — the autonomous loop halts here; the slice does not integrate on a self-declared pass. The human also ratifies the increment's staged refinements (the `knowledge/` additions and any `/harness-improve` proposals). On a clean review, merge into the main line; with the skeleton already live, CI ships the merged slice to the running environment. Then the next increment's loop begins — on a slightly sharper machine than the last.
 
@@ -149,7 +153,8 @@ Keep `specs/` versioned: when a slice's behavior changes, revise its spec rather
 - [ ] Foundation (auth, layout, tokens, base infra) in place and the skeleton deployed from day 1.
 - [ ] Each feature has an approved, versioned spec in `specs/`; no code shipped without one.
 - [ ] Integrations wired against `.env`; planned tracking/analytics implemented.
-- [ ] Every integrated increment passed its gates (tests, lint, type-check) on **real, code-exercising output you ran and saw** — no asserted or placeholder passes — and cleared code review.
+- [ ] Every integrated increment passed its gates (tests, lint, type-check, **product-security review**, and **accessibility** for UI slices) on **real, code-exercising output you ran and saw** — no asserted or placeholder passes — and cleared code review. (Product-security and a11y are flexed by stakes; SAST/SCA and abuse-case checks are must-be-green for `platform`/regulated.)
+- [ ] For an **AI-native** product: every AI/RAG slice cleared the **offline-eval gate before deploy** against the golden set (retrieval / faithfulness / regression).
 - [ ] **CI green AND shipped** to the level the stakes/context require — live main line for greenfield `mvp`/`platform`; deploy-ready/released for `throwaway`, brownfield-with-users, or regulated products.
 - [ ] Each increment's learnings landed in `knowledge/`, and any agent/skill refinements or new specialists were ratified at the review gate — the harness is sharper than it started.
 - [ ] For `platform`: a post-launch note exists (monitoring/alerting, runbook, rollback path).

@@ -45,6 +45,16 @@ unlike [alternative]. -->
   - _..._
   - _..._
 
+## Data & Compliance
+<!-- Lightweight; flex by Stakes tier (skip for throwaway, real for mvp, rigorous for
+platform/regulated). A seed the Security + UX/Design agents carry into the build's gates. -->
+
+- **PII inventory:** <!-- personal data collected, e.g. email, name, location, payment -->
+- **Lawful basis:** <!-- why collecting it is allowed: consent / contract / legitimate interest -->
+- **Retention:** <!-- how long each kind is kept, and when it's deleted -->
+- **Accessibility stakes:** <!-- how important a11y is for this audience (e.g. public-sector/
+  regulated = high; internal weekend tool = low) -->
+
 ## Candidate Features
 <!-- Broad list of everything in play. Don't prioritize here — MVP.md does that.
 Group loosely if helpful. -->

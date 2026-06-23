@@ -35,6 +35,12 @@ Walk the feature set and enumerate every capability that needs an external servi
 - **One or two alternatives**, so the choice is informed rather than imposed.
 - **Cost** — free-tier limits and what the realistic paid tier costs. The user is approving spend; surface it honestly.
 
+These are auto-provisioned services that bill *real money* and run until someone stops them. For each pick, also note three runtime facts so the user isn't surprised later — keep them brief at `throwaway` (a free tier + how to delete it), full at `platform`:
+
+- **Spend cap / budget alert** — does the provider support a hard cap or a budget-threshold alert? Note what you'll set, so a runaway service can't silently run up a bill.
+- **Teardown / rollback path** — how this service gets deprovisioned or rolled back (CLI command, dashboard delete, `terraform destroy`), so a throwaway or abandoned project can be cleanly torn down rather than leaking accounts and charges.
+- **Data residency** — where this service physically stores data (region/jurisdiction), tied to the privacy/PII note from Scope. This is an LGPD/GDPR fact, not a nicety — a service holding EU/BR personal data in the wrong region is a compliance problem before it's a cost one.
+
 Tie every recommendation to a specific feature or stack decision. Don't provision speculative services "because most apps need them" — an analytics provider with no analytics requirement is just an unused key and a privacy surface. If the product genuinely needs it, the feature doc will show it.
 
 Present this whole list as the first gate (see below). Provisioning costs money and creates accounts; the user approves before you touch anything.
@@ -60,13 +66,15 @@ Provisioning gives you an account; configuration makes it fit the product. This 
 
 Configure for this product specifically — the bucket name, the domain, the redirect URLs that match this app, not generic defaults.
 
+While configured into each service, set the **spend cap / budget alert** the provider supports (a billing budget on the cloud account, a usage cap, a low-balance alert), pin the **data-residency region** to match what Scope's privacy/PII note requires, and capture the **teardown command** for the resources you just created. Skip this for free-tier-only `throwaway` services beyond noting the delete path. Everything you set or capture here lands in INTEGRATIONS.md (next step).
+
 ### 4. Consolidate the complete `.env`
 
 Gather every credential — automated and pasted — into a single `.env` at the repo root. Then audit it against the full service list: is every key present, is anything still a placeholder, would the app boot with exactly this file? The deliverable is *complete*, not "the keys we happened to collect." A missing key here is a downstream runtime mystery.
 
 ### 5. Document each integration in INTEGRATIONS.md
 
-For every service, record purpose, provider + rationale, setup steps (or the runbook), the env vars it uses (names only, never values), dashboard links, plan/cost, and status. This is the operational memory: when a key rotates or a service misbehaves later, this doc says what it is and where to manage it.
+For every service, record purpose, provider + rationale, setup steps (or the runbook), the env vars it uses (names only, never values), dashboard links, plan/cost, status — plus the **spend cap / budget alert** set, the **data residency** (region), and the **teardown / rollback** command. This is the operational memory: when a key rotates, a bill spikes, a compliance question lands, or the project is abandoned and must be cleanly torn down, this doc says what it is, where it lives, and how to kill it.
 
 ## Deliverables
 
@@ -75,7 +83,8 @@ Write to `docs/instrumentation/` plus the env files at the repo root:
 ```
 docs/instrumentation/
 └── INTEGRATIONS.md      # per service: purpose, provider + rationale, setup steps,
-                         #   env vars used (names only), dashboard links, plan/cost, status
+                         #   env vars used (names only), dashboard links, plan/cost, status,
+                         #   spend cap, data residency, teardown/rollback
 .env                     # repo root, GITIGNORED — real secret values, never committed
 .env.example             # repo root, tracked — all keys, NO secret values,
                          #   note where real secrets live (1Password / Vault)
@@ -93,14 +102,15 @@ Templates live at `assets/templates/deliverables/`:
 - [ ] All required services are provisioned (via CLI/API or completed runbook) and configured for the product's actual use.
 - [ ] `.env` exists at repo root, is gitignored, and is complete — the app would run with exactly these values.
 - [ ] `.env.example` documents every key, contains no secret values, and notes where real secrets live.
-- [ ] Every integration is recorded in INTEGRATIONS.md (purpose, provider, rationale, setup, env vars, links, cost, status).
+- [ ] Every integration is recorded in INTEGRATIONS.md (purpose, provider, rationale, setup, env vars, links, cost, status, spend cap, data residency, teardown/rollback).
+- [ ] Where the provider supports it, a spend cap / budget alert is set so no service can silently run up a bill; data residency matches Scope's privacy/PII requirement (flex to minimal for `throwaway`).
 - [ ] Secrets-storage strategy is noted (1Password / Vault / platform env settings).
 
 ## The gate
 
 Two human decision points bracket this stage.
 
-**Gate A — approve the provider list before provisioning.** Present the full service list with, per service: the need it serves, the recommended provider, alternatives, and cost (free tier + realistic paid tier). Then STOP. The user is approving real spend and real accounts — they may swap a provider, defer a service, or stay on free tiers. Do not provision until they approve.
+**Gate A — approve the provider list before provisioning.** Present the full service list with, per service: the need it serves, the recommended provider, alternatives, cost (free tier + realistic paid tier), and — for anything that bills — the spend cap you'll set, the data-residency region, and the teardown path. Then STOP. The user is approving real spend and real accounts — they may swap a provider, defer a service, or stay on free tiers. Do not provision until they approve.
 
 **Gate B — confirm the completed `.env` works.** After provisioning, configuring, and consolidating, present the state: every service's status, the complete (key-names-only) `.env` inventory, and confirmation that `.env` is gitignored and `.env.example` is documented. Then STOP for the user to confirm the `.env` is complete and the project can run on it.
 

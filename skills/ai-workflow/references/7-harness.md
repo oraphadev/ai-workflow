@@ -122,6 +122,11 @@ If you're tempted to add a paragraph to CLAUDE.md, that paragraph almost certain
 
 **What:** the gates a change must pass before it merges — automated gates (green CI: tests, lint, type-check, format), a PR/code-review checklist, a written **Definition of Done**, and — **conditionally** — AI evals. Test depth (unit / integration / e2e) is defined **per project** in the brainstorm, not assumed. Back the gates with the superpowers skills: `test-driven-development`, `requesting-code-review`, `verification-before-completion`.
 
+Two further line-items belong on the merge/review gate (flexed by stakes — not new stages):
+
+- **Product-security review (distinct from secrets hygiene).** Beyond keeping secrets out of the repo, the **Security agent threat-models the built product**: authn/authz review, the injection/abuse surface, and **dependency scanning (SAST/SCA)** wired into the merge gate for `platform`/regulated builds. Pull the product's **abuse/misuse cases from the PRD** into the build's verification so the threat model checks against real stated risks, not generic ones. For `throwaway`/`mvp` this can be a lightweight checklist; for `platform`/regulated it's an automated, must-be-green gate.
+- **Accessibility check (any product with a UI).** The **UX/Design agent owns an a11y line-item at the review gate** — keyboard navigation, contrast, and semantics — flexed by stakes (a quick manual pass for `mvp`, automated axe-style checks plus manual review for `platform`). Record it as a gate line-item, not a separate review stage.
+
 **Why:** gates are what make "fast" safe. In a multi-agent build, speed without gates is just faster drift. The written DoD gives every agent the same finish line; green CI makes "it works" mechanical rather than claimed; independent review and AI evals catch what the author missed. The gate skills give the team concrete procedures so the standard is enforced the same way every time.
 
 **AI evals are conditional (stack/domain-dependent).** Stand them up where the system has real LLM-driven behavior to guard *and* solid eval tooling exists for the stack — then treat a failing eval like a failing test. Where there's no LLM behavior to evaluate, or no credible eval harness for the stack, demote evals to *documented-optional* in `HARNESS.md` rather than shipping a hollow suite that passes vacuously.
@@ -190,7 +195,7 @@ Build order matters; each step leans on the ones before it.
 
 7. **Configure tests, lint, type-check, format, and CI.** Set up the toolchain at the depth decided in the brainstorm, with at least one passing example test. Write the CI config (e.g. `.github/workflows`) that runs tests + lint + type-check + format on every push and must be green to merge. Extend an existing CI config rather than replacing it.
 
-8. **Define the quality gates and the loops.** Write the green-CI gate, the PR/code-review checklist, the Definition of Done, and — where warranted — the AI evals, recording them in `HARNESS.md`. Document the **loop-driven build** (`build → verify → learn → refine`) with its verify gates and its hard stop at the human review gate, and the **self-improvement loop** (learnings feed `knowledge/`; agent/prompt/skill refinements are proposed and ratified at the gate). Bind each gate to its backing skill (`test-driven-development`, `requesting-code-review`, `verification-before-completion`).
+8. **Define the quality gates and the loops.** Write the green-CI gate, the PR/code-review checklist, the Definition of Done, the **product-security review** (Security agent: authn/authz + injection/abuse surface + SAST/SCA wired in for `platform`/regulated, checking the PRD's abuse cases), the **accessibility line-item** (UX/Design agent, for any UI, flexed by stakes), and — where warranted — the AI evals, recording them in `HARNESS.md`. Document the **loop-driven build** (`build → verify → learn → refine`) with its verify gates and its hard stop at the human review gate, and the **self-improvement loop** (learnings feed `knowledge/`; agent/prompt/skill refinements are proposed and ratified at the gate). Bind each gate to its backing skill (`test-driven-development`, `requesting-code-review`, `verification-before-completion`).
 
 ## Deliverables
 
@@ -237,6 +242,8 @@ All harness files and `CLAUDE.md` are written in English, regardless of conversa
 - [ ] Tests, lint, type-check, format, and CI configured at the per-project depth.
 - [ ] **Tests + lint + CI green on the hello-world** — verified by running them, not asserted. This is the load-bearing gate: a harness that doesn't go green on a trivial change is not done.
 - [ ] Quality gates written: green-CI gate + PR checklist + Definition of Done + AI evals **where warranted**, recorded in `HARNESS.md`.
+- [ ] **Product-security review** wired as a gate line-item — Security agent threat-models authn/authz + injection/abuse surface, with SAST/SCA in the merge gate for `platform`/regulated and the PRD's abuse cases pulled into verification.
+- [ ] **Accessibility check** wired as a review-gate line-item owned by UX/Design for any product with a UI (keyboard nav, contrast, semantics), flexed by stakes.
 - [ ] `HARNESS.md` documents what the harness contains, the team, the gates, the loops, and how to operate it.
 - [ ] Harness scope matches the `stakes` tier (tiny core for `throwaway`, core + needed roles for `mvp`, full for `platform`).
 
@@ -252,6 +259,8 @@ What to present for Gate 1:
 3. The **knowledge base structure** and what seeds it from Stages 1–6.
 4. The **test depth and gate plan** — the per-project pyramid, the DoD shape, whether the code graph and AI evals are warranted *and* tooling-supported, and how the build loop and self-improvement loop run between gates.
 5. The **stakes-scaled scope** — confirm the harness depth matches the tier.
+
+**When the user is non-technical, present Gate 1 as plain-language consequences.** Frame each design choice (how heavy the gates, whether a code graph, how big the team) in terms the founder owns — **cost, lock-in, and speed** — lead with a clear recommendation, and tuck the engineering rationale behind a short "details" fold. Keep it a **real, recommended-and-confirmed decision**, not a rubber-stamp: surface the credible alternative they could pick (e.g. "lighter gates, ship faster but catch less" vs. "deeper gates, slower but safer") and have them actively confirm — the gate is theater if the only move is to click yes.
 
 **Gate 2 — confirm green on hello-world (before declaring done).** After applying, run the gates against the scaffolded hello-world and present the **actual output** of tests + lint + type-check + CI going green. Do not claim the harness is ready on the strength of the files existing — readiness is proven by the gates passing on a real (trivial) change. Show the evidence, then propose the stage complete.
 

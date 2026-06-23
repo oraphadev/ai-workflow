@@ -58,6 +58,8 @@ Define one **north-star** metric (the single number that means the thesis is wor
 ### 7. User stories + requirements (PRD)
 For each MVP feature write stories as **"As [persona], I want [capability], so that [outcome]"**, each with **acceptance criteria** in testable Given/When/Then form. Add functional requirements, non-functional requirements (performance, security, accessibility), business rules, edge cases / empty-error-loading states, and the initial data entities the feature touches. This is the layer that makes the MVP buildable without guessing.
 
+Alongside the edge cases, capture per feature its **abuse/misuse cases** (auth/authz bypass, injection, rate/quota abuse, input tampering) and concrete **accessibility requirements** for UI features (keyboard, contrast, screen-reader semantics); and in `SCOPE.md` record a one-line **PII inventory / lawful basis / retention** plus the product's **accessibility stakes**. Flex all of this by the Stakes tier in `docs/STATE.md`: skip or keep it to a line for `throwaway`, make it real for `mvp`, and treat it rigorously for `platform` or any regulated/data-collecting product. These are **seeds**, not the final controls — the Security and UX/Design agents on the Stage 7 team carry them forward into the build's gates.
+
 ## Deliverables
 
 Write all three to `docs/product/`, in English, using the templates in `assets/templates/deliverables/`:

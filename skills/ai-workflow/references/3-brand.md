@@ -26,18 +26,20 @@ Confirm the Scope gate actually passed (SCOPE.md approved by the user) before st
 
 ## Steps
 
-The spine of this stage is one repeated gate rhythm: **for each block, propose N distinct directions → user picks one → you refine it.** Naming, positioning, voice, and visual each run this loop independently. Don't bundle all four into one mega-proposal — the user makes a *real* choice per block, and each chosen block constrains the next (the picked name flavors the voice; the voice flavors the visual register). Run them in order; let earlier picks inform later options.
+Brand is reversible and low-stakes — renaming or recoloring later costs little. So this stage uses **one batched approval, not a string of serial stops.** Work the four blocks below in order so each can inform the next, but **prepare them together and present them in a single batched gate** (see *The gate*): N genuinely distinct directions for naming, voice, and visual — each with trade-offs and a recommendation — so the user picks across all blocks in one pass, then you refine. The discipline per block is unchanged (distinct directions, a recommendation, the user's real choice); only the *cadence* changes — you stop once, not four times. This is the deliberate de-bloating of a reversible stage; don't re-fragment it into per-block stops.
+
+Order still matters for *preparing* the options: let the naming candidates flavor the voice directions and the voice flavor the visual register, so the batched menu hangs together rather than reading as four unrelated lists.
 
 ### 1. Naming
 
 Generate candidates concept-first, then validate at the concept level only — **availability checks (domains, trademarks) are out of scope here** and belong to a later operational step. Offer a spread of *approaches*, not just a list of words:
 
 - **Descriptive** (says what it does), **evocative/metaphorical** (suggests a feeling), **invented/coined** (ownable, blank-slate), **compound/portmanteau**, **real-word repurpose**.
-For each candidate give: meaning, why it fits the positioning, pronunciation/spelling risk, and rough connotations. Present a few approaches; recommend one with reasoning, then stop for the pick. Refine the chosen name (spelling, casing, optional sub-brand or product-line logic) after selection.
+For each candidate give: meaning, why it fits the positioning, pronunciation/spelling risk, and rough connotations. Present a few approaches and recommend one with reasoning — carry these into the batched gate rather than stopping here. Refine the chosen name (spelling, casing, optional sub-brand or product-line logic) after the user picks.
 
 ### 2. Positioning
 
-From the chosen name, draft the verbal core: **tagline** (one line, memorable), **core message** (the one-sentence promise), and **brand narrative** (a short paragraph — origin, problem, stance). Propose a couple of distinct angles (e.g. bold/contrarian vs. warm/reassuring) so the user steers the personality before you write the voice guide on top of it.
+Draft the verbal core: **tagline** (one line, memorable), **core message** (the one-sentence promise), and **brand narrative** (a short paragraph — origin, problem, stance). Propose a couple of distinct angles (e.g. bold/contrarian vs. warm/reassuring) so the user steers the personality. Because positioning leans on the name, frame the angles so they read against your recommended name (and note how each shifts if the user picks a different one) — they go into the same batched gate, not a separate stop.
 
 ### 3. Voice & tone (complete)
 
@@ -124,17 +126,20 @@ All written content is in English (artifacts triglot rule). Conversation with th
 - [ ] `VOICE-TONE.md` complete: principles + tone-by-context table + do/don'ts + examples + glossary.
 - [ ] `VISUAL-IDENTITY.md` complete: palette w/ roles, type scale, logo rules, iconography, spacing/grid, components, mood — as **direction**, no rendered logo.
 - [ ] `design-tokens.json` exported in W3C format with `$value`/`$type`, role-based aliases, ready to consume downstream.
-- [ ] Each block was chosen by the user via the N-directions gate, not assumed.
+- [ ] Each block was chosen by the user via the single batched N-directions gate (distinct directions + recommendation per block), not assumed.
 
 ## The gate
 
-The human decisions in this stage are the **selections per block** — there are several gates, not one. For each block (naming, positioning, voice, visual), present **N distinct options** with their trade-offs and a clear recommendation, then STOP and wait for the pick. Refine only after the user chooses; carry the choice into the next block.
+The human decision in this stage is the **brand selection** — and Brand uses **one batched gate, not a stop per block.** Brand is reversible and low-stakes; gating naming, positioning, voice, and visual as four serial stops is over-gating that just slows the user down. Prepare all the directions, then present them together and STOP once.
 
-What makes a good gate here:
+Present, in a single batched proposal, the N distinct directions for each block — naming options, voice options, visual options (with positioning angles attached to the naming/voice they belong to) — so the user picks across all of them in one pass. Then refine the chosen set.
 
-- Options must be **genuinely distinct** (different strategy, not cosmetic variants). Three near-identical names is a fake choice.
+What makes a good batched gate here:
+
+- Each block still offers **N genuinely distinct directions** (different strategy, not cosmetic variants). Three near-identical names is a fake choice — batching the gate does not lower this bar.
 - Each option states its **trade-off** — what it wins and what it costs against the positioning.
-- Give a **recommendation with reasoning**, so the user can defer to judgment or override.
-- After the visual pick, surface tokens for confirmation before writing the file — they are the contract prototyping inherits.
+- Each block leads with a **recommendation and reasoning**, so the user can pick the whole recommended set in one word or override individual blocks.
+- Keep the menu coherent: show how a choice in one block plays with the others (this name + this voice + this visual), so the single pass is a real decision, not four disconnected lists.
+- After the user picks the visual direction, surface the W3C `design-tokens.json` for confirmation before writing the file — they are the contract prototyping inherits. This token confirmation is a quick check on the chosen direction, not a re-opening of the batched gate.
 
-Propose, then stop. The user's selections are what make the brand theirs.
+For a `throwaway` spike, this collapses further — a couple of token choices, or skip the gate entirely (see *Right-size by stakes*). Propose once, then stop. The user's selections are what make the brand theirs.

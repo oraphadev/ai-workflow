@@ -38,6 +38,20 @@ Be precise enough that someone could build it without guessing.
 <!-- Empty, loading, error, partial, offline, concurrency, boundary inputs. -->
 - _..._
 
+### Abuse / Misuse Cases
+<!-- What a malicious or careless actor does to THIS feature. Seeds the Security gate. -->
+<!-- DISPOSABLE examples — replace with this feature's real attack surface. -->
+- _Auth/authz bypass: caller forges/replays a token or hits the endpoint without the required role._
+- _Injection: untrusted input reaches a query/template/command unescaped._
+- _Rate/quota abuse: same actor floods the action to exhaust limits or scrape data._
+- _Input tampering: client edits hidden fields, IDs, or prices the server trusts blindly._
+
+### Accessibility Requirements
+<!-- Real NFR for UI features (drop for pure-backend ones). -->
+- **Keyboard:** all actions reachable and operable without a mouse; visible focus order is logical.
+- **Contrast:** text and meaningful UI meet WCAG AA (4.5:1 body, 3:1 large/UI).
+- **Screen reader:** correct semantics/labels/roles; state changes announced; images have alt text.
+
 ### Data Entities / Model
 <!-- Entities this feature reads/writes and their key fields. -->
 
@@ -70,6 +84,14 @@ Be precise enough that someone could build it without guessing.
 - _..._
 
 ### Edge Cases & States
+- _..._
+
+### Abuse / Misuse Cases
+<!-- Auth/authz bypass, injection, rate/quota abuse, input tampering. Seeds the Security gate. -->
+- _..._
+
+### Accessibility Requirements
+<!-- UI features only. Keyboard, contrast (WCAG AA), screen-reader semantics. -->
 - _..._
 
 ### Data Entities / Model
