@@ -1,0 +1,98 @@
+{
+  "$schema": "https://tr.designtokens.org/format/",
+  "$description": "W3C Design Tokens example. Stack-agnostic. Replace placeholder values with real ones from VISUAL-IDENTITY.md.",
+  "color": {
+    "$description": "Brand and semantic colors. Roles map to VISUAL-IDENTITY.md palette.",
+    "primary": {
+      "$type": "color",
+      "$value": "#3B82F6",
+      "$description": "Main brand color — primary actions and key accents."
+    },
+    "secondary": {
+      "$type": "color",
+      "$value": "#6366F1"
+    },
+    "surface": {
+      "$type": "color",
+      "$value": "#FFFFFF",
+      "$description": "Default background for cards and containers."
+    },
+    "text": {
+      "$type": "color",
+      "$value": "#0F172A",
+      "$description": "Default body text on surface."
+    },
+    "success": {
+      "$type": "color",
+      "$value": "#16A34A"
+    },
+    "warning": {
+      "$type": "color",
+      "$value": "#D97706"
+    },
+    "error": {
+      "$type": "color",
+      "$value": "#DC2626"
+    }
+  },
+  "font": {
+    "family": {
+      "sans": {
+        "$type": "fontFamily",
+        "$value": ["Inter", "system-ui", "sans-serif"]
+      },
+      "mono": {
+        "$type": "fontFamily",
+        "$value": ["JetBrains Mono", "monospace"]
+      }
+    },
+    "size": {
+      "$description": "Type scale (ratio ~1.25).",
+      "body": { "$type": "dimension", "$value": "16px" },
+      "heading": { "$type": "dimension", "$value": "32px" },
+      "display": { "$type": "dimension", "$value": "48px" },
+      "caption": { "$type": "dimension", "$value": "13px" }
+    },
+    "weight": {
+      "regular": { "$type": "fontWeight", "$value": 400 },
+      "medium": { "$type": "fontWeight", "$value": 500 },
+      "bold": { "$type": "fontWeight", "$value": 700 }
+    }
+  },
+  "spacing": {
+    "$description": "Base-4 spacing scale.",
+    "xs": { "$type": "dimension", "$value": "4px" },
+    "sm": { "$type": "dimension", "$value": "8px" },
+    "md": { "$type": "dimension", "$value": "16px" },
+    "lg": { "$type": "dimension", "$value": "24px" },
+    "xl": { "$type": "dimension", "$value": "48px" }
+  },
+  "radius": {
+    "sm": { "$type": "dimension", "$value": "4px" },
+    "md": { "$type": "dimension", "$value": "8px" },
+    "full": { "$type": "dimension", "$value": "9999px" }
+  },
+  "shadow": {
+    "$description": "Elevation shadows.",
+    "sm": {
+      "$type": "shadow",
+      "$value": {
+        "color": "#0F172A1A",
+        "offsetX": "0px",
+        "offsetY": "1px",
+        "blur": "2px",
+        "spread": "0px"
+      }
+    },
+    "md": {
+      "$type": "shadow",
+      "$value": {
+        "color": "#0F172A26",
+        "offsetX": "0px",
+        "offsetY": "4px",
+        "blur": "8px",
+        "spread": "0px"
+      }
+    }
+  }
+}

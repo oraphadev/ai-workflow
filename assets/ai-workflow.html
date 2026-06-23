@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI Development Workflow</title>
+<style>
+  :root {
+    --bg: #0b0f1a;
+    --panel: #121829;
+    --panel-2: #1a2238;
+    --border: #25304d;
+    --text: #e6ebf5;
+    --muted: #93a0bd;
+    --accent: #6ea8fe;
+    --s1: #6ea8fe; --s2: #7ee0c0; --s3: #f7a8d8; --s4: #f6c177;
+    --s5: #a4b3ff; --s6: #6fd6e8; --s7: #c8a8f7; --s8: #8be08b;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: radial-gradient(1200px 800px at 80% -10%, #15203a 0%, var(--bg) 55%);
+    color: var(--text); font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Inter, sans-serif;
+    -webkit-font-smoothing: antialiased; line-height: 1.5;
+  }
+  header { padding: 48px 24px 8px; text-align: center; }
+  header h1 { margin: 0; font-size: 32px; letter-spacing: -0.02em; }
+  header p { margin: 8px auto 0; max-width: 720px; color: var(--muted); font-size: 15px; }
+  .legend { display:flex; gap:18px; justify-content:center; flex-wrap:wrap; margin:18px 0 8px; color:var(--muted); font-size:13px; }
+  .legend span { display:inline-flex; align-items:center; gap:6px; }
+  .dot { width:10px; height:10px; border-radius:50%; display:inline-block; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 24px 20px 80px; }
+  .flow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  @media (max-width: 900px){ .flow { grid-template-columns: repeat(2,1fr);} }
+  @media (max-width: 560px){ .flow { grid-template-columns: 1fr;} }
+  .card {
+    position: relative; background: linear-gradient(180deg, var(--panel) 0%, var(--panel-2) 100%);
+    border: 1px solid var(--border); border-radius: 16px; padding: 18px 16px; cursor: pointer;
+    transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease;
+  }
+  .card:hover { transform: translateY(-3px); border-color: var(--c); box-shadow: 0 10px 30px -12px var(--c); }
+  .card .num { font-size: 13px; font-weight: 700; color: var(--c); letter-spacing: .04em; }
+  .card h3 { margin: 6px 0 8px; font-size: 17px; letter-spacing:-0.01em; }
+  .card .obj { font-size: 13px; color: var(--muted); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .card .bar { position:absolute; left:0; top:16px; bottom:16px; width:4px; border-radius:4px; background: var(--c); }
+  .card .open { margin-top: 12px; font-size: 12px; color: var(--c); font-weight:600; }
+  .arrow { text-align:center; color: var(--muted); font-size: 13px; margin: 6px 0 18px; letter-spacing:.06em; }
+
+  /* modal */
+  .overlay { position: fixed; inset: 0; background: rgba(4,7,15,.72); backdrop-filter: blur(4px); display:none; align-items:center; justify-content:center; padding:24px; z-index: 50; }
+  .overlay.show { display:flex; }
+  .modal { width: min(820px, 100%); max-height: 86vh; overflow:auto; background: var(--panel); border:1px solid var(--border); border-radius: 18px; }
+  .modal-head { padding: 22px 24px; border-bottom:1px solid var(--border); position: sticky; top:0; background: var(--panel); border-radius:18px 18px 0 0; }
+  .modal-head .num { font-size:13px; font-weight:700; color: var(--c); }
+  .modal-head h2 { margin: 6px 0 0; font-size: 22px; }
+  .modal-body { padding: 8px 24px 28px; }
+  .dim { margin-top: 20px; }
+  .dim h4 { margin: 0 0 8px; font-size: 12px; text-transform: uppercase; letter-spacing: .1em; color: var(--c); }
+  .dim p { margin: 0; color: var(--text); font-size: 14.5px; }
+  .dim ul { margin: 0; padding-left: 18px; }
+  .dim li { font-size: 14px; margin: 4px 0; color: var(--text); }
+  .dim .muted { color: var(--muted); }
+  pre { background: #0c1120; border:1px solid var(--border); border-radius: 12px; padding: 14px; overflow:auto; font-size: 12.5px; color:#cdd7ee; }
+  .close { position:absolute; top:18px; right:20px; background:none; border:none; color:var(--muted); font-size:26px; cursor:pointer; line-height:1; }
+  .dod { background: rgba(110,168,254,.08); border:1px solid var(--border); border-left:3px solid var(--c); border-radius: 10px; padding: 12px 14px; font-size:14px; }
+  footer { text-align:center; color:var(--muted); font-size:12.5px; padding: 0 0 40px; }
+  .team { display:grid; grid-template-columns: repeat(3,1fr); gap:8px; }
+  @media (max-width:560px){ .team{ grid-template-columns:1fr 1fr; } }
+  .team span { background:#0c1120; border:1px solid var(--border); border-radius:8px; padding:6px 10px; font-size:12.5px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>AI Development Workflow</h1>
+  <p>Um pipeline repetível, otimizado para AI/vibe coding — da pesquisa de mercado ao MVP em produção. Clique em qualquer etapa para expandir suas 5 dimensões.</p>
+  <div class="legend">
+    <span><i class="dot" style="background:var(--s1)"></i>Planejamento (1–6)</span>
+    <span><i class="dot" style="background:var(--s7)"></i>Harness (7)</span>
+    <span><i class="dot" style="background:var(--s8)"></i>Build (8)</span>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="arrow">Discovery → Scope → Brand → Prototyping → Stack → Instrumentation → Harness → Vibe Coding</div>
+  <div class="flow" id="flow"></div>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="modal" id="modal"></div>
+</div>
+
+<footer>5 dimensões por etapa · os deliverables de planejamento (1–6) vivem no repo em <code>/docs</code> · Stack precede Instrumentation · deploy-first desde o dia 1</footer>
+
+<script>
+const STAGES = [
+  {
+    n: 1, name: "Discovery", color: "var(--s1)",
+    objective: "Mapear o mercado e os competidores a fundo (panorama completo + todas as rotas/features) para entender o espaço e revelar oportunidades antes de decidir o que construir.",
+    inputs: ["Ideia/hipótese inicial do produto", "Critérios de tipo de competidor (diretos / indiretos / análogos) definidos pelo usuário que executa"],
+    steps: [
+      "O agent propõe uma lista de candidatos a competidor (sem teto); o usuário cura e aprova a lista final",
+      "Dispara um /workflows com um subagent por competidor para deep competitive analysis",
+      "Por competidor → DISCOVERY.md: panorama 360º em 9 dimensões (posicionamento, público, pricing, modelo de negócio, forças/fraquezas, stack técnica, canais/SEO, sentimento, features-core)",
+      "Por competidor → ROUTES.md: todas as rotas (pública + logada) em granularidade total — path, propósito, public|logged, features, componentes de UI, estados, CTAs, dados exibidos. Área logada: o usuário decide se fornece acesso/prints; caso contrário, é inferida e marcada como tal",
+      "Opcional por projeto: screenshots das rotas públicas-chave via automação de browser",
+      "Consolida os achados cross-competitor em SUMMARY.md"
+    ],
+    deliverables: `/discovery
+  /<competitor-name>
+    DISCOVERY.md      # panorama 360º (9 dimensões)
+    ROUTES.md         # todas as rotas, granularidade total
+    /screenshots      # opcional
+  SUMMARY.md          # padrões, matriz de features (competidor × feature),
+                      # gaps, oportunidades, recomendações para o Scope`,
+    dod: "Todo competidor tem DISCOVERY.md + ROUTES.md completos; o SUMMARY.md consolida padrões, matriz de features e oportunidades acionáveis que alimentam o Scope."
+  },
+  {
+    n: 2, name: "Scope Definition", color: "var(--s2)",
+    objective: "Converter os achados da Discovery numa definição clara e enxuta do que será construído — produto, diferencial e recorte do MVP — via um brainstorming assertivo conduzido pelo agent.",
+    inputs: ["/discovery (SUMMARY.md, ROUTES.md dos competidores)"],
+    steps: [
+      "Brainstorming conduzido pelo agent sobre o output da Discovery para convergir a visão de produto e o recorte do MVP",
+      "Definir proposta de valor, posicionamento e diferenciais vs competidores",
+      "Definir personas (detalhadas, Jobs-To-Be-Done: jobs, dores, ganhos, contexto)",
+      "Listar features candidatas (a partir dos padrões + gaps da Discovery)",
+      "Priorizar e recortar o MVP usando Impacto × Esforço; fasear como MVP → v1 → backlog",
+      "Definir success metrics do produto (north-star + KPIs + critérios de aceite do MVP)",
+      "Escrever user stories (Como X, quero Y, para Z) + critérios de aceite, requisitos, regras de negócio, edge cases"
+    ],
+    deliverables: `/product
+  SCOPE.md    # visão, proposta de valor, posicionamento, personas (JTBD),
+              # success metrics/north-star, features candidatas, sitemap macro
+  MVP.md      # features priorizadas, faseado MVP→v1→backlog (Impacto×Esforço),
+              # sitemap/telas do MVP, fluxos principais, critérios de sucesso do MVP
+  PRD.md      # por feature: user stories + critérios de aceite, requisitos
+              # funcionais e não-funcionais, regras de negócio, edge cases, entidades`,
+    dod: "MVP fechado e priorizado; sitemap + user stories detalhados o suficiente para prototipar e construir; diferencial claro vs competidores."
+  },
+  {
+    n: 3, name: "Brand Definition", color: "var(--s3)",
+    objective: "Definir a identidade de marca completa — do nome ao design token — para consistência verbal e visual.",
+    inputs: ["/product (SCOPE.md — posicionamento, personas, diferenciais)"],
+    steps: [
+      "Para cada bloco (naming, posicionamento, voz/tom, visual) o agent propõe N direções; o usuário escolhe e o agent refina",
+      "Naming: gerar e validar o nome do produto (nível conceitual; checagem de disponibilidade fora do escopo)",
+      "Posicionamento: tagline, mensagem central, narrativa da marca",
+      "Voz & tom (completo): princípios + tom por contexto + do's/don'ts + exemplos + glossário",
+      "Identidade visual (spec completa — direção, não logo gerado): paleta, tipografia, regras de logo, iconografia, grid, componentes, mood",
+      "Design tokens: W3C Design Tokens (JSON) — stack-agnóstico, transformável depois"
+    ],
+    deliverables: `/brand
+  BRAND.md             # naming, posicionamento, tagline, narrativa
+  VOICE-TONE.md        # voz, tom por contexto, do's/don'ts, exemplos, glossário
+  VISUAL-IDENTITY.md   # paleta, tipografia, regras de logo, iconografia, grid, mood
+  design-tokens.json   # W3C Design Tokens (stack-agnóstico)`,
+    dod: "Nome definido; guias verbal + visual completos; tokens exportados e prontos para consumir. Sem /assets — o agent entrega a spec, não um logo gerado."
+  },
+  {
+    n: 4, name: "Prototyping", color: "var(--s4)",
+    objective: "Materializar as telas/fluxos do escopo numa representação navegável, na ferramenta mais adequada ao projeto, para validar a UX antes de codar.",
+    inputs: ["/product (sitemap do MVP, user stories)", "/brand (tokens, identidade visual)"],
+    steps: [
+      "Escolher ferramenta/fidelidade por projeto (Figma, Claude Design, Google Stitch, código…) — registrar escolha + porquê. Produção é híbrida: o agent gera onde a ferramenta permite, senão o usuário produz e o agent orienta/documenta",
+      "Prototipar todas as telas do MVP, aplicando a identidade visual + tokens",
+      "Cobrir os estados relevantes por tela: vazio, loading, erro, sucesso",
+      "Revisar o protótipo contra o PRD/user stories e ajustar",
+      "Exportar/registrar (link e/ou assets) como referência para o build"
+    ],
+    deliverables: `/prototype
+  PROTOTYPE.md   # ferramenta + porquê, link do protótipo, inventário tela↔rota,
+                 # decisões de UX, validação vs PRD
+  /exports       # telas exportadas (quando a ferramenta permite)`,
+    dod: "Todas as telas do MVP prototipadas com a identidade aplicada; estados relevantes cobertos; fluxos principais navegáveis e validados contra as user stories."
+  },
+  {
+    n: 5, name: "Stack Definition", color: "var(--s5)",
+    objective: "Escolher e justificar a stack técnica completa (frontend, backend, dados, auth, infra) alinhada ao escopo e ao protótipo. Precede a Instrumentation para que os serviços sejam provisionados alinhados à stack.",
+    inputs: ["/product", "/prototype"],
+    steps: [
+      "O agent recomenda opções por camada (frontend, backend, dados, auth, infra) com trade-offs; o usuário escolhe",
+      "Decidir frontend, backend, dados, auth e infra/deploy/hosting",
+      "Decidir bibliotecas-chave por domínio (forms, validação, estado…)",
+      "Registrar decisões, trade-offs, versões e compatibilidades",
+      "Definir a arquitetura: diagrama + modelo de dados (entidades/relações) + estrutura de pastas + fluxo de dados"
+    ],
+    deliverables: `/stack
+  STACK.md          # frontend, backend, dados, auth, infra + justificativas
+  DEPENDENCIES.md   # libs-chave + versões + propósito
+  ARCHITECTURE.md   # diagrama, modelo de dados, estrutura de pastas, fluxo de dados`,
+    dod: "Stack completa decidida e justificada; arquitetura (incl. modelo de dados + estrutura de pastas) definida; pronta para provisionar serviços e montar o harness."
+  },
+  {
+    n: 6, name: "Instrumentation", color: "var(--s6)",
+    objective: "Provisionar e configurar todos os serviços externos (storage, e-mail, analytics, auth, pagamentos…), alinhados à stack escolhida, terminando com um .env completo de tudo que o projeto precisa para rodar.",
+    inputs: ["/product (features necessárias)", "/stack (para escolher providers alinhados à stack)"],
+    steps: [
+      "A partir das features + stack, o agent lista os serviços necessários e recomenda providers (alternativas + custo) → o usuário aprova",
+      "Provisionar via CLI/API onde der; para o resto, o agent gera um runbook por serviço que o usuário executa",
+      "Configurar cada serviço (buckets, domínio de e-mail, propriedades de analytics, webhooks…)",
+      "Consolidar as credenciais num .env completo (gitignored) + .env.example documentado",
+      "Documentar cada integração no INTEGRATIONS.md"
+    ],
+    deliverables: `/instrumentation
+  INTEGRATIONS.md   # por serviço: propósito, provider + porquê, passos de setup,
+                    # env vars, links do painel, plano/custo, status
+  .env              # credenciais reais (gitignored)
+  .env.example      # todas as chaves documentadas, sem secrets
+                    # + nota: onde os secrets reais vivem (1Password/Vault)`,
+    dod: "Todos os serviços necessários provisionados e configurados; .env completo e funcional; .env.example documentado; cada integração registrada; estratégia de armazenamento de secrets definida."
+  },
+  {
+    n: 7, name: "Harness Definition", color: "var(--s7)",
+    objective: "Via um brainstorming conduzido pelo agent, desenhar o harness ideal totalmente customizado para o projeto e aplicá-lo ao repo. Princípio central: o agent líder sempre atua como Orchestrator, distribuindo tarefas para um time de tecnologia completo.",
+    inputs: ["/stack (STACK, ARCHITECTURE)", "/brand (tokens)", "/product (PRD/user stories)", "/instrumentation (.env)", "Todos os docs de planejamento (1–6) como knowledge"],
+    steps: [
+      "Brainstorm do harness ideal (time, skills, commands, knowledge, gates)",
+      "Scaffold do repo na stack escolhida",
+      "Escrever um CLAUDE.md/AGENTS.md enxuto (context root mínimo) + o modelo operacional do Orchestrator",
+      "Configurar o time de agentes (subagents), skills, slash commands e MCP servers",
+      "Subir a geração/manutenção do code graph (mapa auto-mantido de módulos/deps/símbolos)",
+      "Semear a knowledge base versionada (etapas 1–6 + padrões + docs das libs)",
+      "Configurar testes, lint, type-check, format e CI (nível por projeto)",
+      "Definir os quality gates: CI verde + checklist de PR + Definição de Pronto + AI evals"
+    ],
+    deliverables: `/ (raiz do repo)
+  CLAUDE.md / AGENTS.md   # enxuto; modelo operacional do Orchestrator
+  /.claude
+    /agents               # o time de 15 papéis
+    /skills  /commands    # skills + slash commands
+    settings + MCP config
+  /knowledge              # KB versionada (ADRs, padrões, docs de libs, aprendizados)
+  /.codegraph             # code graph gerado + tooling
+  /tests   + CI config    # ex: .github/workflows
+  HARNESS.md              # o que contém, o time, os gates, como operar`,
+    team: ["Orchestrator (lead)","PM","Architect","Frontend","Backend","DevOps","QA","Security","Observability","UX/Design","Data/DBA","Code Reviewer","Docs","Growth/SEO","Data Analyst"],
+    dod: "Repo com scaffold; context enxuto + modelo do Orchestrator escritos; time/skills/commands/MCP configurados; code graph no ar; KB semeada; tests+lint+CI verdes num hello-world; gates definidos."
+  },
+  {
+    n: 8, name: "Vibe Coding", color: "var(--s8)",
+    objective: "Construir o produto feature a feature usando o harness — o Orchestrator distribui o trabalho para o time, o SDD conduz cada incremento e os verification gates protegem cada passo.",
+    inputs: ["Tudo: /product, /prototype, /brand, /stack, /instrumentation", "O harness (etapa 7)"],
+    steps: [
+      "Quebrar o MVP num plano de build incremental (ordem seguindo o faseamento MVP→v1)",
+      "Ordem de build: fundação primeiro (auth, layout, design tokens, infra base) → deploy no dia 1 (walking skeleton no ar) → features em vertical slices",
+      "Por incremento (loop de SDD): o Orchestrator gera/aprova a spec, planeja e distribui para o time; o time executa; os verification gates precisam passar antes de integrar",
+      "Deploy-first / continuous deployment: toda feature vai pro ambiente no ar assim que concluída",
+      "Implementar o tracking/analytics planejado e plugar as integrações (.env)",
+      "Code review → integrar → próximo incremento",
+      "Validar o produto contra success metrics / critérios de aceite"
+    ],
+    deliverables: `Aplicação funcional (MVP) no repo, deployada desde o dia 1
+PROGRESS.md     # tracker do build / pendências
+CHANGELOG.md    # mudanças incrementais
+/specs          # specs de SDD por feature, versionadas`,
+    dod: "MVP implementado conforme escopo e protótipo; integrações plugadas; CI verde e deployado; features validadas contra user stories e success metrics."
+  }
+];
+
+const flow = document.getElementById('flow');
+STAGES.forEach(s => {
+  const c = document.createElement('div');
+  c.className = 'card';
+  c.style.setProperty('--c', s.color);
+  c.innerHTML = `<div class="bar"></div>
+    <div class="num">ETAPA ${s.n}</div>
+    <h3>${s.name}</h3>
+    <div class="obj">${s.objective}</div>
+    <div class="open">Abrir ↗</div>`;
+  c.onclick = () => openModal(s);
+  flow.appendChild(c);
+});
+
+const overlay = document.getElementById('overlay');
+const modal = document.getElementById('modal');
+function li(arr){ return '<ul>' + arr.map(x=>`<li>${x}</li>`).join('') + '</ul>'; }
+function openModal(s){
+  modal.style.setProperty('--c', s.color);
+  modal.innerHTML = `
+    <button class="close" onclick="closeModal()">×</button>
+    <div class="modal-head" style="--c:${s.color}">
+      <div class="num">ETAPA ${s.n}</div>
+      <h2>${s.name}</h2>
+    </div>
+    <div class="modal-body">
+      <div class="dim"><h4>Objetivo</h4><p>${s.objective}</p></div>
+      <div class="dim"><h4>Inputs</h4>${li(s.inputs)}</div>
+      <div class="dim"><h4>Steps</h4>${li(s.steps)}</div>
+      <div class="dim"><h4>Deliverables</h4><pre>${s.deliverables.replace(/</g,'&lt;')}</pre></div>
+      ${s.team ? `<div class="dim"><h4>Time de Agentes (15 papéis)</h4><div class="team">${s.team.map(t=>`<span>${t}</span>`).join('')}</div></div>`:''}
+      <div class="dim"><h4>Definição de Pronto</h4><div class="dod">${s.dod}</div></div>
+    </div>`;
+  overlay.classList.add('show');
+}
+function closeModal(){ overlay.classList.remove('show'); }
+overlay.onclick = e => { if(e.target === overlay) closeModal(); };
+document.addEventListener('keydown', e => { if(e.key === 'Escape') closeModal(); });
+</script>
+</body>
+</html>
