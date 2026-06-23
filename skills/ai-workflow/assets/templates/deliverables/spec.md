@@ -5,7 +5,7 @@
 
 - **Spec ID:** `<SPEC-001>`
 - **Title:** `<short descriptive name>`
-- **Linked user story:** `<PRD reference, e.g. US-12 "As a user, I can ...">`
+- **Linked user story:** `US-NN` <!-- the PRD user-story ID this spec implements, e.g. US-12 "As a user, I can ..."; this is the join key back to PRD.md -->
 - **Status:** `<draft / approved / in progress / done>`
 
 ## Goal

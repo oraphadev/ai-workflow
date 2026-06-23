@@ -6,6 +6,8 @@
 
 Choose and justify the full technical stack — frontend, backend, data, auth, infra — aligned to the scope (`docs/product/`) and the prototype (`docs/prototype/`), then define an architecture concrete enough to build from: a diagram, a data model, a folder structure, and the data flow.
 
+Stack depth flexes by the `docs/STATE.md` Stakes tier: a *throwaway* project wants minimal sane defaults and little ceremony, while a *platform* warrants the full treatment — every layer justified, versions pinned, and ADRs for the load-bearing calls. Scale the rigor below to the tier; don't gold-plate a throwaway or under-document a platform.
+
 This stage precedes Instrumentation deliberately, and that ordering is the whole point: services get provisioned *against a decided stack*, not guessed at. Instrumentation reads `STACK.md` to know which database to stand up, which auth provider to wire, which hosting target to configure — so if the stack is vague or undecided here, Instrumentation has nothing firm to provision. Decide the stack first; provision second. Likewise, the Harness scaffolds *on* this stack — the folder structure and framework choices you record become the skeleton the next stage fills. Knowledge compounds forward only if the decisions are explicit and versioned.
 
 ## Inputs
@@ -38,13 +40,15 @@ Drive each layer to a concrete decision, not a hand-wave:
 - **Backend** — runtime, framework, API style (REST / GraphQL / RPC).
 - **Data** — database, ORM/query layer, cache (if any).
 - **Auth** — provider/approach (managed service vs. self-rolled, session vs. token).
-- **Infra / deploy / hosting** — where it runs, how it ships, the deploy target.
+- **Infra / deploy / hosting** — where it runs, how it ships, the deploy target. The *shippable artifact* form depends on project type — a live URL, an npm/pip package, a compiled binary, a mobile app build (TestFlight/Play) — so name the artifact, not just "deploy".
 
 Each choice should trace back to a scope or prototype signal — a decision with no rationale is a decision you can't defend at the gate or revisit later. Keep choices compatible across layers (the ORM must support the database; the hosting must run the runtime); incompatibility surfaced now is cheap, surfaced at Harness time is expensive.
 
 ### 3. Decide key libraries per domain
 
 Below the framework level, name the workhorse libraries: forms, validation, client/server state, data fetching, dates, testing, and so on. These aren't afterthoughts — they shape the developer experience and the code the Harness will scaffold. Pick deliberately and record each with its purpose, so the next stage isn't improvising.
+
+Also record the **test / lint / type-check / build commands for *this* stack** — they are chosen per stack, not assumed to be the JS/web set. Python is pytest/ruff/mypy; Rust is cargo test/clippy/build; Go is go test/vet/build; iOS is xcodebuild. Capture the exact commands so specs (Verification) and the Harness run the right ones rather than defaulting to `npm`.
 
 ### 4. Record decisions, trade-offs, versions, and compatibilities
 

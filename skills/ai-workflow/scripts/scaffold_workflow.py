@@ -34,7 +34,7 @@ STAGE_ROWS = [
 ]
 
 
-def state_md(idea: str, today: str) -> str:
+def state_md(idea: str, today: str, stakes: str, lang: str) -> str:
     rows = "\n".join(
         f"| {n} | {name} | `{status}` | {'— (active)' if status == 'in_progress' else '—'} |"
         for n, name, status in STAGE_ROWS
@@ -42,9 +42,12 @@ def state_md(idea: str, today: str) -> str:
     return f"""# Workflow State — heartbeat
 
 > Read this FIRST on every session. It is the single source of truth for where
-> the project is in the pipeline. Keep it current after every gate.
+> the project is in the pipeline. Reconcile it against GATES.md + the docs/ tree
+> on resume, and keep its header current after every transition.
 
 - **Project idea:** {idea or "TODO — capture the one-line idea + target users"}
+- **Stakes:** {stakes}   <!-- throwaway | mvp | platform — dials the depth of every stage -->
+- **Conversation language:** {lang or "TODO — detect or ask, then record here"}
 - **Created:** {today}
 - **Current stage:** 1 — Discovery
 - **Last gate passed:** none yet
@@ -89,6 +92,10 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("root", help="target project root")
     ap.add_argument("--idea", default="", help="one-line project idea")
+    ap.add_argument("--stakes", default="mvp",
+                    choices=["throwaway", "mvp", "platform"],
+                    help="stakes tier — dials the depth of every stage")
+    ap.add_argument("--lang", default="", help="conversation language")
     args = ap.parse_args()
 
     root = os.path.abspath(args.root)
@@ -104,7 +111,7 @@ def main() -> int:
         print(f"skip  {state_path} (already exists — preserving live state)")
     else:
         with open(state_path, "w") as f:
-            f.write(state_md(args.idea, today))
+            f.write(state_md(args.idea, today, args.stakes, args.lang))
         print(f"write {state_path}")
 
     gates_path = os.path.join(docs, "GATES.md")

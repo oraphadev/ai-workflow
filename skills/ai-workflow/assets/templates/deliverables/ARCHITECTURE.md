@@ -19,6 +19,10 @@ graph TD
 ## Data model
 
 > Entities and their relationships. Edit this Mermaid erDiagram to match the schema.
+>
+> **Tenancy:** `<single-tenant | multi-tenant>`. If multi-tenant, state where the
+> tenant key lives — e.g. a `tenant_id` (or `org_id`) FK on every tenant-scoped
+> entity, used for row-level isolation. Single-tenant entities omit it.
 
 ```mermaid
 erDiagram

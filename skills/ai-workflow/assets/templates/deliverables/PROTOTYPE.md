@@ -19,15 +19,19 @@
 
 ## 3. Screen ↔ route inventory
 
-| Screen | Route | States covered | Status |
-| ------ | ----- | -------------- | ------ |
-| `<Home>` | `/` | `<default, loading, empty>` | `<Done / WIP / Todo>` |
-| `<Login>` | `/login` | `<default, error, loading>` | `<...>` |
-| `<Dashboard>` | `/dashboard` | `<default, empty, error>` | `<...>` |
-| `<Detail>` | `/items/:id` | `<default, not-found>` | `<...>` |
-| `<...>` | `<...>` | `<...>` | `<...>` |
+<!-- DISPOSABLE example rows below — replace, don't ship verbatim.
+     The US column lists the PRD user-story IDs (US-NN) each screen serves,
+     so screens trace back to PRD stories. -->
+| Screen | Route | US (stories) | States covered | Status |
+| ------ | ----- | ------------ | -------------- | ------ |
+| `<Home>` | `/` | `<US-01>` | `<default, loading, empty>` | `<Done / WIP / Todo>` |
+| `<Login>` | `/login` | `<US-02>` | `<default, error, loading>` | `<...>` |
+| `<Dashboard>` | `/dashboard` | `<US-03, US-04>` | `<default, empty, error>` | `<...>` |
+| `<Detail>` | `/items/:id` | `<US-05>` | `<default, not-found>` | `<...>` |
+| `<...>` | `<...>` | `<...>` | `<...>` | `<...>` |
 
 > Cover meaningful states (loading / empty / error / success), not just the happy path.
+> The **US** column references PRD stories by their `US-NN` ID — every screen should map to at least one.
 
 ## 4. UX decisions log
 
@@ -43,9 +47,9 @@ Record notable decisions and their reasoning so future changes have context.
 
 Check each requirement and user story is represented in the prototype.
 
-- [ ] `<US-1: As a user, I can …>` — covered by `<screen/route>`
-- [ ] `<US-2: …>` — covered by `<screen/route>`
-- [ ] `<US-3: …>` — covered by `<screen/route>`
+- [ ] `<US-01: As a user, I can …>` — covered by `<screen/route>`
+- [ ] `<US-02: …>` — covered by `<screen/route>`
+- [ ] `<US-03: …>` — covered by `<screen/route>`
 - [ ] All PRD core flows have a corresponding screen
 - [ ] Every screen has an entry and an exit path (no dead ends)
 - [ ] Error / empty / loading states exist for primary flows

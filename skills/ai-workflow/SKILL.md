@@ -54,23 +54,47 @@ from a plausible-looking mess.
    stages 7–8). Sloppy, vague, or missing artifacts silently corrupt every
    downstream stage.
 
+## Right-size by stakes — one pipeline, three depths
+
+This pipeline was designed for a serious greenfield product, but it must not pour
+enterprise machinery into a weekend spike — that mismatch is the #1 reason a
+generic pipeline gets abandoned. A single **stakes** tier, captured at scaffold
+time and stored in `docs/STATE.md`, dials the depth of every stage:
+
+| Stakes | Discovery | Brand | Stack/Arch | Harness (7) | Build (8) |
+|--------|-----------|-------|-----------|-------------|-----------|
+| `throwaway` | quick scan of 1–3 references, **no** deep fan-out | skip / a few tokens | minimal, sane defaults | skip, or a tiny core (Orchestrator + Builder + Reviewer) | ship fast, light gates |
+| `mvp` | 2–4 direct rivals deep, the rest light | full but batched | full, justified | core team + the roles this project actually needs | SDD loop, deploy-first |
+| `platform` | full nested deep research | full | full + ADRs | full harness, all warranted roles | full gates + post-launch |
+
+Each stage's reference says how it flexes for the tier. **The full maximal
+pipeline is the `platform` setting — never the unconditional default.** When
+unsure, ask the user to confirm the tier rather than assuming big.
+
 ## First thing, every session: locate yourself
 
 Before anything else, find out where the project is in the pipeline. Do not
 assume you are starting fresh.
 
-1. Look for `docs/STATE.md` at the project root.
-   - **It exists** → read it. It tells you the current stage, which gates have
-     been passed, and what is pending. Resume from there. Then skim only the
-     artifacts relevant to the current stage (do not re-read everything).
-   - **It does not exist** → this is a zero project. Scaffold the workflow first
-     (see *Scaffolding a new project* below), then begin Stage 1.
-2. Announce where you are: *"You're in Stage N (<name>). Last gate passed: X.
-   Next up: Y."* Keep the user oriented — this pipeline spans many sessions.
-3. **Check for a skip.** If the user is asking you to work on a stage *later*
-   than the current one in `docs/STATE.md` (or a later stage's artifacts don't
-   have their upstream prerequisites), don't jump there. Name the gap and steer
-   back to the earliest incomplete stage — see *Stay on the rails* below.
+1. Look at the project root.
+   - **`docs/STATE.md` exists** → read it. It names the current stage, the stakes
+     tier, which gates passed, and what's pending. Resume from there; skim only
+     the artifacts relevant to the current stage. Before acting, **reconcile**:
+     cross-check `docs/STATE.md` against `docs/GATES.md` and the real `docs/`
+     tree — if they disagree, durable evidence (actual files and ledger entries)
+     wins over a stale header, and you fix the header.
+   - **No `docs/STATE.md` and the repo is empty** → a true zero project. Scaffold
+     the workflow (see *Scaffolding a new project*), then begin Stage 1.
+   - **No `docs/STATE.md` but the repo is NOT empty** (it has code, a manifest,
+     `.git`, an existing `.claude/` or CI) → a **brownfield** project. Don't treat
+     it as zero, and don't clobber anything. See *Working in an existing repo*.
+2. Announce where you are: *"You're in Stage N (<name>), stakes: <tier>. Last
+   gate: X. Next: Y."* Keep the user oriented — this spans many sessions.
+3. **Handle entry intent.** If the user asks to work on a stage other than the
+   current one, neither blindly comply nor blindly refuse — apply *Stay on the
+   rails*: support legitimate entries (brownfield, already-have-artifacts, a
+   `throwaway` scope-down) with a one-line caveat; refuse only a *hollow* skip
+   onto missing upstream work, and steer back.
 
 `docs/STATE.md` is the heartbeat. `docs/GATES.md` is the gate ledger. Together
 they are the source of truth for "where are we." Keep both current.
@@ -110,9 +134,17 @@ A gate is a hard stop where a human decides. When you reach one:
 - Then **stop and wait.** Do not start the next stage's work, do not write its
   artifacts, do not "get ahead." Getting ahead of a gate is the failure mode
   this whole design exists to prevent.
-- On approval: append an entry to `docs/GATES.md` (date, stage, decision, who
-  approved), flip the stage to `done` in `docs/STATE.md`, set the next stage to
-  `in_progress`, and announce the transition.
+- On approval: append an entry to `docs/GATES.md` — and a gate is only *passed*
+  once that entry **quotes (or faithfully paraphrases, with a timestamp) the
+  user's actual approval words.** Don't self-attest a gate you weren't granted:
+  you propose, the human grants, the ledger records *their* decision. Then flip
+  the stage to `done` in `docs/STATE.md`, set the next to `in_progress`, and
+  announce the transition.
+- **Verification gates are evidence, not assertion.** Where a gate claims
+  something ran green (CI, a complete `.env`, a passing test), it must rest on
+  *actual output you ran and saw* — and a "CI green" gate needs a test that
+  genuinely exercises the code, not a vacuous placeholder. The whole safety model
+  rests on the ledger and these checks being honest, so never fabricate either.
 
 When a stage offers the human a *choice between options* (stages 3, 5, 6
 especially), generate **N genuinely distinct directions with trade-offs**, lead
@@ -131,13 +163,22 @@ The fan-out pattern is the default, not the exception — and for heavy research
 stages it is **nested**: you dispatch leads, and each lead dispatches its own
 workers. Depth comes from layering fan-out, not from one agent working harder.
 
+But fan-out is **expensive** — nested deep research can spin up dozens to
+hundreds of subagents. Treat depth as a dial, not a default: scale it to the
+project's stakes (see *Right-size by stakes*), cap it sensibly, and surface a
+rough token/time cost at the relevant checkpoint *before* you spend it, so the
+human opts in with eyes open. Depth that no one reads before the next gate is
+just burned budget.
+
 ## Conventions (apply everywhere, no exceptions)
 
-- **Triglot language policy.** Converse with the user in *their* language
-  (Portuguese by default here). But **every written artifact — files in `docs/`,
-  `CLAUDE.md`, skills, commands, commit messages, code comments — is in
-  English.** Identifiers (files, folders, symbols) are English. This keeps the
-  knowledge base portable and consistent.
+- **Language policy.** Converse with the user in *their* language — detect it
+  from how they write to you, or ask once at the start, and record it in
+  `docs/STATE.md` (`conversation_language`). But **every written artifact — files
+  in `docs/`, `CLAUDE.md`, skills, commands, commit messages, code comments — is
+  in English**, and identifiers are English, so the knowledge base stays
+  portable. (This is the *internal* rule. *User-facing product copy* follows the
+  product's market language, decided in Brand — keep the two separate.)
 - **Where deliverables live.** Planning artifacts (stages 1–6) live under
   `docs/<stage>/`. Heartbeat and ledger live at `docs/STATE.md` and
   `docs/GATES.md`. The harness (stage 7) and build (stage 8) write to the repo
@@ -159,26 +200,40 @@ workers. Depth comes from layering fan-out, not from one agent working harder.
   references hold the depth. Load a reference only when you enter its stage.
 - **Cross-cutting principles** (true in every stage): Orchestrator-first; SDD
   everywhere (`spec → plan → build → verify`); Deploy-first (live from day 1 in
-  Stage 8); Gates before progress; Knowledge compounds.
+  Stage 8, where the stakes warrant it); Gates before progress; Knowledge
+  compounds. And in the build half specifically — the harness is
+  **self-improving** (each increment's learnings feed `knowledge/` and refine the
+  agents/prompts), execution is **loop-driven** (build → verify → learn → refine,
+  running autonomously *between* gates), and the agent team is **dynamic** (the 15
+  roles are a seed that Stage 7 specializes to the project and Stage 8 grows on
+  demand). Stages 7–8 define these mechanisms; their autonomy always halts at the
+  increment's review gate.
 
 ## Scaffolding a new project (zero → ready to run Stage 1)
 
-When `docs/STATE.md` is absent, stand up the skeleton before Stage 1:
+When the repo is empty and `docs/STATE.md` is absent, stand up the skeleton
+before Stage 1. First capture three things from the user (ask once, briefly):
+the **one-line idea + target users**; the **stakes tier** (`throwaway` | `mvp` |
+`platform` — default `mvp` and say so if unsure); and the **conversation
+language**.
+
+Then run the scaffold script. It lives in *this skill's own directory* — the file
+you are reading is `<skill>/SKILL.md`, so the script is at
+`<skill>/scripts/scaffold_workflow.py`; if you can't resolve that path, just
+create the structure by hand from `assets/templates/state/`:
 
 ```bash
-python <skill>/scripts/scaffold_workflow.py <project-root>
+python <skill>/scripts/scaffold_workflow.py <project-root> \
+  --idea "<one-line idea>" --stakes <throwaway|mvp|platform> --lang <language>
 ```
 
-This creates `docs/` with the stage subfolders, a fresh `docs/STATE.md` (Stage 1
-`in_progress`, all others `pending`), and an empty `docs/GATES.md`. If Python is
-unavailable, create the structure manually from
-`assets/templates/state/STATE.md` and `assets/templates/state/GATES.md`. Confirm
-the project's basic identity with the user (one-line idea, target users) and
-record it at the top of `docs/STATE.md`, then begin Stage 1.
+This creates `docs/` with the stage subfolders, a `docs/STATE.md` seeded with the
+idea, stakes, and language (Stage 1 `in_progress`, the rest `pending`), and an
+empty `docs/GATES.md`. The script never overwrites an existing STATE.md/GATES.md.
+Then begin Stage 1.
 
-> Do **not** scaffold the full `.claude/` harness here — that is Stage 7's job,
-> and it must be designed against the chosen stack and brand, not guessed
-> upfront.
+> Do **not** scaffold the `.claude/` harness here — that's Stage 7's job,
+> designed against the chosen stack and brand, not guessed upfront.
 
 ## Stage reference map
 
@@ -216,16 +271,63 @@ The pipeline is meant to be followed **completely and in order**. It is not an
   stage's loop. Don't make the user re-summon you stage by stage. The gates pace
   the work; they don't fragment it.
 
-- **No skipping ahead.** If the user asks to jump to a *later* stage while
-  earlier ones are incomplete (e.g. "just scaffold the harness" on a project with
-  no Discovery/Scope/Stack), do not comply with the skip. Building Stage 7 on an
-  empty planning base produces a harness wired to decisions that were never made.
-  Instead: check `docs/STATE.md` and the `docs/` artifacts, name exactly which
-  upstream stages are missing, and steer the user back to the **earliest
-  incomplete stage** — offer to start/resume from there and carry the flow
-  forward continuously. Be helpful about it, but hold the line: the value of this
-  pipeline is that each stage stands on real upstream work.
+- **No building onto a hollow base.** The thing to prevent is building a *later*
+  stage on planning that was never done — scaffolding the harness (Stage 7) on a
+  project with no Scope or Stack. If the upstream artifacts a stage genuinely
+  needs don't exist, don't fabricate them by skipping: name exactly what's
+  missing, state the concrete risk of proceeding anyway, and steer to the
+  earliest real gap. Hold *that* line — it's the core value.
 
-Starting a brand-new project at **Stage 1** and doing that first stage is not
-skipping — that's the front door, and continuing from there is exactly the point.
-What you refuse is *parachuting past* undone stages into the middle or end.
+  But distinguish a *hollow skip* from a **legitimate entry**, and support the
+  legitimate ones with at most a one-line caveat — don't argue with a user who
+  has a real reason (that's the fastest way to get uninstalled):
+  - **Brownfield / existing repo** — there's already code, a stack, maybe a PRD
+    or brand. Adopt it (see *Working in an existing repo*), don't refuse.
+  - **Already-have-artifacts** — the user did upstream work elsewhere (a Figma
+    prototype, a Linear PRD, a chosen stack). Map those onto the `docs/` stages
+    as done-by-import with provenance, then proceed.
+  - **Intentional scope-down** — a `throwaway` spike may legitimately skip Brand,
+    deep Discovery, or the full harness. Honor it; flag the debt; move on.
+
+  The failure mode is *silent* building on nothing. A warned, user-confirmed entry
+  on real (or imported) ground is exactly what a helpful conductor does.
+
+Starting a brand-new project at **Stage 1** is the front door, not a skip;
+continuing from there is the point. What you refuse is *silently* parachuting onto
+planning that doesn't exist.
+
+## Working in an existing repo (brownfield)
+
+A non-empty repo with no `docs/STATE.md` is a brownfield adoption, not a zero
+project. Two unbreakable rules:
+
+1. **Never clobber.** An existing `CLAUDE.md`, `.claude/`, CI config, or app
+   config is reconciled or left alone — never overwritten. Ask before touching
+   anything that's already there. (The scaffold script is already idempotent for
+   STATE/GATES; extend that instinct to everything.)
+2. **Ingest before you plan.** Read the manifest/lockfiles, the schema, and any
+   existing PRD/brand/stack/design docs. Map what exists onto the `docs/` stages
+   as *done-by-import* (record provenance in `docs/STATE.md` and a `docs/GATES.md`
+   note), then enter the pipeline at the earliest stage that's genuinely missing —
+   a legitimate mid-pipeline entry, not a skip.
+
+For a rebuild/migration, add data-migration and cutover to the build plan, and
+treat the live system's users as a constraint (no reckless deploy-first).
+
+## When NOT to use this skill / non-goals
+
+Be honest about fit so a wrong-fit user doesn't commit before discovering the
+mismatch:
+
+- **Not a single-task tool.** A bug fix, adding one feature to a mature app, a
+  one-off competitor report, or "set up CI on my repo" is better done directly —
+  this skill is for taking a *project* through the pipeline. If a request is
+  clearly a one-shot task on an existing system, say so and offer the direct path
+  (or brownfield adoption if they genuinely want the full process).
+- **Not a logo/asset generator** — Brand delivers direction + tokens, not art.
+- **Not ceremony for a throwaway** — if someone just wants to hack, point them at
+  building directly, or run the deliberately-thin `throwaway` tier.
+
+It still triggers on loose "I have an idea, take it to an MVP" phrasing — that's
+the target. The non-goals above are where you redirect instead of running the
+whole machine.

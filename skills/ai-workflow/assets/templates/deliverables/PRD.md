@@ -9,9 +9,12 @@ Be precise enough that someone could build it without guessing.
 ## Feature: <!-- feature name -->
 
 ### User Stories
-<!-- Format: As a <role>, I want <goal>, so that <benefit>. -->
-- As a _<role>_, I want _<goal>_, so that _<benefit>_.
-- As a _<role>_, I want _<goal>_, so that _<benefit>_.
+<!-- Format: As a <role>, I want <goal>, so that <benefit>.
+     Each story gets a stable ID (US-NN). This ID is the JOIN KEY: specs
+     (Linked user story) and the prototype (US column) reference stories by it.
+     Never renumber an existing ID — it breaks the trace. -->
+- **US-01** — As a _<role>_, I want _<goal>_, so that _<benefit>_. <!-- DISPOSABLE example row -->
+- **US-02** — As a _<role>_, I want _<goal>_, so that _<benefit>_. <!-- DISPOSABLE example row -->
 
 ### Acceptance Criteria
 <!-- Testable conditions. Given/When/Then or checklist. -->
@@ -38,6 +41,7 @@ Be precise enough that someone could build it without guessing.
 ### Data Entities / Model
 <!-- Entities this feature reads/writes and their key fields. -->
 
+<!-- DISPOSABLE example rows below — replace, don't ship verbatim. -->
 | Entity   | Field        | Type     | Notes              |
 |----------|--------------|----------|--------------------|
 | _Example_| _id_         | _uuid_   | _PK_               |
@@ -48,7 +52,8 @@ Be precise enough that someone could build it without guessing.
 ## Feature: <!-- feature name -->
 
 ### User Stories
-- As a _<role>_, I want _<goal>_, so that _<benefit>_.
+<!-- IDs continue the sequence across all features; they don't reset per feature. -->
+- **US-03** — As a _<role>_, I want _<goal>_, so that _<benefit>_. <!-- DISPOSABLE example row -->
 
 ### Acceptance Criteria
 - [ ] _..._
