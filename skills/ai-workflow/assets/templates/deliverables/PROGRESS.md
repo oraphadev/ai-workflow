@@ -11,6 +11,16 @@
 | `<Slice 2 — name>` | ⬜ | `<specs/slice-2.md>` | No | `<...>` |
 | `<...>` | ⬜ | `<...>` | No | `<...>` |
 
+## Resume notes (active increment)
+
+> The handoff for "one increment, one context": enough for a FRESH session to
+> resume this slice without re-walking dead ends. Overwrite per increment.
+
+- **Active slice:** `<slice name + specs/ path>`
+- **Next unmet gate:** `<the specific check still red — e.g. "Verify: payment webhook test failing">`
+- **Critical files (with line numbers):** `<path:line — why it matters>`
+- **Failed approaches (don't retry):** `<what was tried + why it didn't work>`
+
 ## Foundation checklist
 
 > Day-1 scaffolding that everything else builds on. Aim to deploy on day one.

@@ -212,6 +212,13 @@ rough token/time cost at the relevant checkpoint *before* you spend it, so the
 human opts in with eyes open. Depth that no one reads before the next gate is
 just burned budget.
 
+**Hard return contract for workers.** A subagent's memory is siloed, and its raw
+output is the most common way junk floods the lead's window — so every fan-out
+worker **writes its bulk output to a file path and returns only a short digest (a
+paragraph or two) + that path + a pass/fail verdict.** The conductor reads the
+path when it needs the detail; the transcript stays flat. Durable state flows
+through shared files, never through what a worker "remembers".
+
 ## Conventions (apply everywhere, no exceptions)
 
 - **Language policy.** Converse with the user in *their* language — detect it
@@ -240,6 +247,27 @@ just burned budget.
   inline a 60KB doc into context — point to it and read the relevant slice. This
   applies to how *you* operate too: this SKILL.md is the spine; the per-stage
   references hold the depth. Load a reference only when you enter its stage.
+- **Context budget & placement.** Treat the context window as a *depletable
+  budget*, not free space: reliability decays with how many tokens are live (the
+  trustworthy working set is a fraction of the advertised window), so keep each
+  stage's working set lean and never let one thread grow unbounded. Fight
+  *lost-in-the-middle* — put the **active gate/spec at the top** of a stage or
+  subagent prompt and **repeat the key decision at the bottom**; keep the most
+  recent tool results as a "hot tail" and let older, re-fetchable ones fall away.
+- **Cheapest lever first when context fills.** Manage it in this order: (1) push
+  durable facts to **files** (STATE/GATES/knowledge/specs), (2) **isolate** heavy
+  work in a subagent that returns only a digest, (3) **prune** re-fetchable tool
+  results (large file reads, grep dumps, build logs) once their conclusion is
+  recorded, and only as a **last resort** (4) summarize/compact — and even then
+  only at a gate safe-point, never mid-increment, writing the summary straight
+  back into STATE.md. The write-barrier under all of it: **never drop a tool
+  result until the conclusion it supports is persisted to a file** — crystallize
+  before you clear.
+- **Cache-friendly prompts.** Put the *stable* part first (the skill, the
+  pipeline invariants, the tool set) and the *volatile* part last (current stage,
+  latest results); keep timestamps, run-ids, and re-serialized JSON out of the
+  stable prefix, so this long, repetitive pipeline keeps hitting the prompt cache
+  instead of paying full price every turn.
 - **Cross-cutting principles** (true in every stage): Orchestrator-first; SDD
   everywhere (`spec → plan → build → verify`); Deploy-first (live from day 1 in
   Stage 8, where the stakes warrant it); Gates before progress; Knowledge

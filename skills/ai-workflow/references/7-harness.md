@@ -98,6 +98,15 @@ If you're tempted to add a paragraph to CLAUDE.md, that paragraph almost certain
 
 **Why:** skills make procedures repeatable and reviewable; subagent dispatch keeps each task's context clean and lets independent work run in parallel. This is the mechanism behind orchestrate-don't-code: the Orchestrator's job is to choose skills and dispatch subagents, not to hold every detail itself.
 
+**Subagent task-spec checklist.** The prompt string is the *only* channel from parent to child — nothing is inherited — so every dispatch inlines:
+
+- **Objective** — the one outcome this worker owns, stated up top.
+- **Inputs** — the exact file paths (and the specific excerpts) it needs; never assume it can see the lead's context.
+- **Output** — the required format *and* a size cap.
+- **Boundaries** — its tool, permission, and model limits.
+- **Return contract** — write bulk output to `<path>`; return a short digest + that path + a pass/fail verdict.
+- Scale the briefing effort to the fan-out: a single worker is cheap; a 2–4 fan-out or a wide Workflow run warrants tighter specs.
+
 ### Slash commands
 
 **What:** author commands for the operations you'll run dozens of times — at minimum `/spec`, `/plan`, `/review`, `/codegraph` (regenerate the map), and whatever the brainstorm identifies. Seed from `assets/templates/harness/commands/`.

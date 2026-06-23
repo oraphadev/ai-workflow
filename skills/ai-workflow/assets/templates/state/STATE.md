@@ -29,3 +29,12 @@ Statuses: `pending` · `in_progress` · `blocked` · `done`
 ## Next action
 
 Begin Stage 1 (Discovery): propose a competitor list for the user to curate.
+
+## Resume
+
+> What a fresh session needs to pick up cleanly. Keep it to a few lines.
+
+- **Blockers:** `<anything waiting on the human / an external step, or "none">`
+- **During the build (Stage 8):** the per-increment handoff lives in
+  `PROGRESS.md` → *Resume notes* (next gate, critical files+lines, failed
+  approaches). Read it before resuming a slice.
