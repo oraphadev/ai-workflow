@@ -17,6 +17,7 @@ You are choosing technology to fit decisions already made — so read them befor
 - **Scope — `docs/product/`.** The MVP cut, the must-have features, the non-functional constraints (scale, latency, compliance, budget). These bound the stack: a real-time collaborative feature pushes toward a particular data layer; a tight budget rules out certain managed services. Don't recommend in a vacuum — recommend against the scope.
 - **Prototype — `docs/prototype/`.** The shape of the UI and the interaction model inform frontend framework, styling approach, and UI library. If the prototype leans on rich client state or heavy interactivity, that's a signal for the frontend decision.
 - **Initial data entities — from `PRD.md` (Stage 2).** The PRD already names the core entities. Pull that list forward as the *seed* of the data model; this stage elaborates them into relations, fields, and constraints. You are not inventing the entity list here — you are maturing an existing one.
+- **Experience standards — `docs/brand/DESIGN-STANDARDS.md`.** Brand recorded framer-motion + Swup.js as the default motion/navigation direction (plus an accessibility/performance floor). Reconcile these against the frontend framework you choose here: keep them if the stack is web/React-compatible, or pick equivalents (and record the swap) if it isn't — the motion/navigation *experience* is a decided contract; the library is the implementation detail.
 
 Confirm the Prototyping gate has passed: `docs/GATES.md` should record acceptance of Stage 4 and `docs/STATE.md` should show Stage 5 `in_progress`. If the prototype wasn't accepted, the UI signals you'd lean on aren't trustworthy yet — resolve that before deciding the frontend.
 
@@ -38,7 +39,7 @@ For every layer — frontend, backend, data, auth, infra — present a small set
 
 Drive each layer to a concrete decision, not a hand-wave:
 
-- **Frontend** — framework, styling approach, UI component library.
+- **Frontend** — framework, styling approach, UI component library, and the **motion + navigation libraries** that satisfy the Brand experience standards (framer-motion + Swup.js by default for a web stack; equivalents otherwise — record the choice).
 - **Backend** — runtime, framework, API style (REST / GraphQL / RPC).
 - **Data** — database, ORM/query layer, cache (if any).
 - **Auth** — provider/approach (managed service vs. self-rolled, session vs. token).
@@ -86,6 +87,7 @@ docs/stack/
 
 - [ ] All five layers (frontend, backend, data, auth, infra) decided by the user, each with a justification tied to scope or prototype.
 - [ ] Key libraries per domain chosen, each recorded with a pinned version and its purpose.
+- [ ] The Brand experience standards' motion/navigation defaults (framer-motion + Swup.js) reconciled against the chosen frontend — kept or swapped for equivalents, with the decision recorded in `STACK.md` under the Frontend layer and each motion/navigation library (or its swap equivalent) recorded in `DEPENDENCIES.md` with a pinned version.
 - [ ] Versions and cross-layer compatibilities verified and recorded — no unversioned decisions.
 - [ ] AI/LLM model details (if any) sourced from `claude-api`, not memory — and for an **AI-native** product, the model + vector store + a cost/latency-per-query budget are decided.
 - [ ] `ARCHITECTURE.md` defines diagram + data model (elaborated from PRD entities) + folder structure + data flow.

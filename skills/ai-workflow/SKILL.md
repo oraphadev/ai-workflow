@@ -63,9 +63,9 @@ time and stored in `docs/STATE.md`, dials the depth of every stage:
 
 | Stakes | Discovery | Brand | Stack/Arch | Harness (7) | Build (8) |
 |--------|-----------|-------|-----------|-------------|-----------|
-| `throwaway` | quick scan of 1–3 references, **no** deep fan-out | skip / a few tokens | minimal, sane defaults | skip, or a tiny core (Orchestrator + Builder + Reviewer) | ship fast, light gates |
-| `mvp` | 2–4 direct rivals deep, the rest light | full but batched | full, justified | core team + the roles this project actually needs | SDD loop, deploy-first |
-| `platform` | full nested deep research | full | full + ADRs | full harness, all warranted roles | full gates + post-launch |
+| `throwaway` | quick scan of 1–3 references, **no** deep fan-out | skip / a few tokens + a11y floor | minimal, sane defaults | skip, or a tiny core (Orchestrator + Builder + Reviewer) | ship fast, light gates |
+| `mvp` | 2–4 direct rivals deep, the rest light | full but batched; design standards confirmed | full, justified | core team + the roles this project actually needs | SDD loop, deploy-first |
+| `platform` | full nested deep research | full + perf budgets | full + ADRs | full harness, all warranted roles | full gates + post-launch |
 
 Each stage's reference says how it flexes for the tier. **The full maximal
 pipeline is the `platform` setting — never the unconditional default.** When
@@ -315,7 +315,7 @@ at deliverable templates, and defines the stage's gate.
 |---|-------|-----------|-----------|---------------|
 | 1 | Discovery | `references/1-discovery.md` | `docs/discovery/` | Approve competitor list; accept opportunities → Scope |
 | 2 | Scope | `references/2-scope.md` | `docs/product/` | Approve MVP cut + differentiator |
-| 3 | Brand | `references/3-brand.md` | `docs/brand/` | Pick brand directions (naming, voice, visual) |
+| 3 | Brand | `references/3-brand.md` | `docs/brand/` | Pick brand directions (naming, voice, visual); confirm design standards |
 | 4 | Prototyping | `references/4-prototyping.md` | `docs/prototype/` | Approve prototype vs PRD |
 | 5 | Stack | `references/5-stack.md` | `docs/stack/` | Choose stack per layer |
 | 6 | Instrumentation | `references/6-instrumentation.md` | `docs/instrumentation/` | Approve providers; complete `.env` |

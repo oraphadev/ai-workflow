@@ -2,15 +2,32 @@
   "$schema": "https://tr.designtokens.org/format/",
   "$description": "W3C Design Tokens example. Stack-agnostic. Replace placeholder values with real ones from VISUAL-IDENTITY.md.",
   "color": {
-    "$description": "Brand and semantic colors. Roles map to VISUAL-IDENTITY.md palette.",
+    "$description": "Brand and semantic colors. Primitives live in `brand`; semantic roles alias them with {color.brand.*} so themes stay swappable (per VISUAL-IDENTITY.md).",
+    "brand": {
+      "500": {
+        "$type": "color",
+        "$value": "#3B82F6",
+        "$description": "Primary brand primitive."
+      },
+      "900": {
+        "$type": "color",
+        "$value": "#1E3A8A",
+        "$description": "Dark brand primitive."
+      },
+      "accent": {
+        "$type": "color",
+        "$value": "#6366F1",
+        "$description": "Accent primitive."
+      }
+    },
     "primary": {
       "$type": "color",
-      "$value": "#3B82F6",
+      "$value": "{color.brand.500}",
       "$description": "Main brand color — primary actions and key accents."
     },
     "secondary": {
       "$type": "color",
-      "$value": "#6366F1"
+      "$value": "{color.brand.accent}"
     },
     "surface": {
       "$type": "color",
@@ -81,7 +98,8 @@
         "offsetX": "0px",
         "offsetY": "1px",
         "blur": "2px",
-        "spread": "0px"
+        "spread": "0px",
+        "inset": false
       }
     },
     "md": {
@@ -91,8 +109,42 @@
         "offsetX": "0px",
         "offsetY": "4px",
         "blur": "8px",
-        "spread": "0px"
+        "spread": "0px",
+        "inset": false
       }
     }
+  },
+  "duration": {
+    "$description": "Motion durations (framer-motion / transitions). Token-driven so motion stays consistent and SEO-safe.",
+    "fast": { "$type": "duration", "$value": "120ms" },
+    "base": { "$type": "duration", "$value": "200ms" },
+    "slow": { "$type": "duration", "$value": "320ms" }
+  },
+  "easing": {
+    "$description": "Easing curves for motion (cubic-bezier control points).",
+    "standard": { "$type": "cubicBezier", "$value": [0.4, 0, 0.2, 1] },
+    "emphasized": { "$type": "cubicBezier", "$value": [0.2, 0, 0, 1] }
+  },
+  "transition": {
+    "$description": "Composite motion tokens referencing duration + easing — ready to consume in framer-motion / CSS transitions.",
+    "standard": {
+      "$type": "transition",
+      "$value": { "duration": "{duration.base}", "delay": "0ms", "timingFunction": "{easing.standard}" }
+    },
+    "enter": {
+      "$type": "transition",
+      "$value": { "duration": "{duration.fast}", "delay": "0ms", "timingFunction": "{easing.emphasized}" }
+    },
+    "exit": {
+      "$type": "transition",
+      "$value": { "duration": "{duration.fast}", "delay": "0ms", "timingFunction": "{easing.standard}" }
+    }
+  },
+  "zIndex": {
+    "$description": "Stacking order for layered UI (dropdowns, modals, toasts). NOTE: `$type: number` is a custom (non-DTCG) type; Style Dictionary v4+ handles it, and the `$extensions` hint records the integer intent.",
+    "base": { "$type": "number", "$value": 0, "$extensions": { "org.tokens.type": "integer" } },
+    "dropdown": { "$type": "number", "$value": 1000, "$extensions": { "org.tokens.type": "integer" } },
+    "modal": { "$type": "number", "$value": 1300, "$extensions": { "org.tokens.type": "integer" } },
+    "toast": { "$type": "number", "$value": 1500, "$extensions": { "org.tokens.type": "integer" } }
   }
 }

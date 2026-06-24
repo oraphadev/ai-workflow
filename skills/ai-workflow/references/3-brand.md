@@ -20,15 +20,17 @@ Confirm the Scope gate actually passed (SCOPE.md approved by the user) before st
 
 ## Capability routing
 
+- **`/ui-ux-pro-max:ui-ux-pro-max` plugin — mandatory for any design/visual work.** Every task that touches design or the visual layer — proposing visual directions, defining components, materializing tokens, any UI judgement call — routes through this plugin so the output is refined, optimized, and polished rather than templated. If it isn't installed in the target repo, **recommend the user install it** (via their plugin manager), then proceed. If they decline or it's unavailable, degrade gracefully to `frontend-design` + the design standards below and note the degraded rung in `DESIGN-STANDARDS.md` — routed tools are verify-at-use, per the thin-environment ladder.
+- **Mobbin (and reference inputs) — design reference-driven, not from scratch.** Recommend the user pull real, current references — Mobbin (via its MCP if connected), screenshots, and live sites — and feed them in as the basis for the visual directions. Deriving palette, type, and component patterns from proven references beats inventing them blind; cite the references behind each direction.
 - **`frontend-design` skill** — load it before proposing visual directions. It steers toward distinctive, intentional choices (real typographic personality, a palette with a point of view) and away from the templated defaults that make every option look the same. Use it to pressure-test that your N visual directions are genuinely different, not three shades of the same safe gray.
 - **Figma MCP (optional)** — only if the user wants the palette or type scale *materialized* to look at. Useful as a preview. It does not change the deliverable: the source of truth stays `VISUAL-IDENTITY.md` + `design-tokens.json`, never a Figma file. Don't let a Figma round-trip become the artifact.
 - **W3C Design Tokens** — the format for `design-tokens.json` (see Steps). Stack-agnostic on purpose, so it transforms later into CSS variables, Tailwind config, iOS, etc., without re-deciding anything.
 
 ## Steps
 
-Brand is reversible and low-stakes — renaming or recoloring later costs little. So this stage uses **one batched approval, not a string of serial stops.** Work the four blocks below in order so each can inform the next, but **prepare them together and present them in a single batched gate** (see *The gate*): N genuinely distinct directions for naming, voice, and visual — each with trade-offs and a recommendation — so the user picks across all blocks in one pass, then you refine. The discipline per block is unchanged (distinct directions, a recommendation, the user's real choice); only the *cadence* changes — you stop once, not four times. This is the deliberate de-bloating of a reversible stage; don't re-fragment it into per-block stops.
+Brand is reversible and low-stakes — renaming or recoloring later costs little. So this stage uses **one batched approval, not a string of serial stops.** Work the five blocks below in order so each can inform the next, but **prepare them together and present them in a single batched gate** (see *The gate*): N genuinely distinct directions for naming, voice, and visual — each with trade-offs and a recommendation — plus the proposed experience & design standards for keep/change confirmation — so the user picks across all blocks in one pass, then you refine. The discipline per block is unchanged (distinct directions, a recommendation, the user's real choice); only the *cadence* changes — you stop once, not five times. This is the deliberate de-bloating of a reversible stage; don't re-fragment it into per-block stops.
 
-Order still matters for *preparing* the options: let the naming candidates flavor the voice directions and the voice flavor the visual register, so the batched menu hangs together rather than reading as four unrelated lists.
+Order still matters for *preparing* the options: let the naming candidates flavor the voice directions and the voice flavor the visual register, so the batched menu hangs together rather than reading as five unrelated lists.
 
 ### 1. Naming
 
@@ -71,7 +73,33 @@ Write the full specification. State explicitly that this is direction; the logo 
 - **Key components** — visual treatment direction for buttons, inputs, cards, etc. (states, radius, elevation language).
 - **Mood / references** — adjectives, comparables, and what to deliberately avoid, so the direction is unambiguous.
 
-### 5. Design tokens (W3C)
+### 5. Experience & design standards (proactive — propose, then confirm)
+
+Modern AI-built products live or die on interaction quality, not just palette and type. So here you **proactively propose the current best-practice design/UX standards for this product** as one curated, opinionated default set — then ask the user what to **keep or change**. Unlike the other blocks, this is not N competing directions; it is a recommended baseline the user ratifies or edits. Record the agreed set in `DESIGN-STANDARDS.md` — it becomes a **contract** that Prototyping (4), Stack (5), and Vibe Coding (8) enforce.
+
+Propose at least the following, each framed as *standard / why / how it reconciles at Stack*, and let the user adjust:
+
+- **Mobile-first** — design mobile-up; thumb-zone reachability, safe-area/notch insets, touch targets ≥ 44–48px.
+- **Accessibility floor (non-negotiable)** — input font-size ≥ 16px (prevents iOS zoom-on-focus), WCAG AA contrast (≥ 4.5:1 text), semantic HTML + ARIA, visible focus and full keyboard nav, and honoring `prefers-reduced-motion`.
+- **Motion — framer-motion on every element, SEO-safe** — purposeful motion that never blocks render or shifts layout (CLS), always gated by `prefers-reduced-motion`. Named as the strong default; reconciled against the chosen framework at Stage 5.
+- **Navigation — Swup.js app-like transitions** — page transitions that feel like a native mobile app, especially between pages. Strong default; reconciled at Stage 5.
+- **Visual consistency & component reuse (mandatory)** — design a coherent component system where every screen inherits from the same primitive set; no reinvention, one visual language across every surface (the build then reuses existing components rather than rebuilding them).
+- **Forms & input masks** — apply masks by default on convenient fields (e.g. a numeric value via a text field with a mask), and set the right `inputmode` / input `type` / `autocomplete` so mobile shows the correct keyboard.
+- **Media** — lazy-load images/video/gifs with a blurhash placeholder; use responsive delivery and modern efficient formats.
+- **Perceived performance** — skeleton loaders / optimistic UI; `font-display: swap` + font preload to avoid layout shift.
+- **Performance budget (SEO guard-rail)** — a Core Web Vitals budget that keeps the motion and transitions honest; motion that hurts LCP/CLS/INP is out of budget, not on-brand.
+- **Designed states** — empty / loading / error / success are designed, not afterthoughts (this feeds Stage 4's states-per-screen).
+- **Theming & icons** — dark mode / theming driven by tokens; a single coherent iconography set.
+- **App-like shell** — PWA / installability where it fits; entrance and scroll animations are purposeful and lightweight, never blocking interaction.
+- **i18n-ready** — copy and layout ready for the product's market language(s) (separate from the artifacts-in-English convention — see Language policy in SKILL.md).
+
+Flex by stakes — prepare these alongside the other blocks so the batched menu coheres, then carry them into the single gate:
+
+- `throwaway` — confirm only the accessibility floor plus two or three standards; note the rest as deferred.
+- `mvp` — confirm the full set (in the one batched gate).
+- `platform` — the full set plus explicit performance budgets and measurement.
+
+### 6. Design tokens (W3C)
 
 Translate the chosen visual identity into `design-tokens.json` following the **W3C Design Tokens** format — a stack-agnostic source, transformed later into CSS vars, Tailwind, etc. Structure:
 
@@ -107,6 +135,7 @@ docs/brand/
 ├── BRAND.md            # name, positioning, tagline, core message, narrative
 ├── VOICE-TONE.md       # voice principles, tone-by-context, do/don't, glossary
 ├── VISUAL-IDENTITY.md  # palette, type, logo rules, spacing, components, mood
+├── DESIGN-STANDARDS.md # experience & design standards: mobile-first, a11y, motion, nav, reuse, masks, media
 └── design-tokens.json  # W3C tokens — stack-agnostic source of truth
 ```
 
@@ -115,9 +144,10 @@ Use the templates as the skeleton for each file:
 - `assets/templates/deliverables/BRAND.md`
 - `assets/templates/deliverables/VOICE-TONE.md`
 - `assets/templates/deliverables/VISUAL-IDENTITY.md`
+- `assets/templates/deliverables/DESIGN-STANDARDS.md`
 - `assets/templates/deliverables/design-tokens.json`
 
-All written content is in English (artifacts triglot rule). Conversation with the user follows their language; the files do not.
+All written content is in English (artifacts-in-English convention — see Language policy in SKILL.md). Conversation with the user follows their language; the files do not.
 
 ## Definition of Done
 
@@ -125,8 +155,9 @@ All written content is in English (artifacts triglot rule). Conversation with th
 - [ ] `BRAND.md` complete: name, tagline, core message, narrative.
 - [ ] `VOICE-TONE.md` complete: principles + tone-by-context table + do/don'ts + examples + glossary.
 - [ ] `VISUAL-IDENTITY.md` complete: palette w/ roles, type scale, logo rules, iconography, spacing/grid, components, mood — as **direction**, no rendered logo.
+- [ ] `DESIGN-STANDARDS.md` complete: all standards from Step 5 proposed and confirmed (kept/changed) by the user — sections 0–10 of the template filled — with framer-motion/Swup.js marked as defaults to reconcile at Stack, and any `ui-ux-pro-max` fallback rung noted.
 - [ ] `design-tokens.json` exported in W3C format with `$value`/`$type`, role-based aliases, ready to consume downstream.
-- [ ] Each block was chosen by the user via the single batched N-directions gate (distinct directions + recommendation per block), not assumed.
+- [ ] Each directional block (naming, voice, visual) was presented with N distinct options and chosen by the user; the experience & design standards were proposed as a recommended baseline and confirmed (kept or changed) — all via the single batched gate, not assumed.
 
 ## The gate
 
@@ -139,7 +170,8 @@ What makes a good batched gate here:
 - Each block still offers **N genuinely distinct directions** (different strategy, not cosmetic variants). Three near-identical names is a fake choice — batching the gate does not lower this bar.
 - Each option states its **trade-off** — what it wins and what it costs against the positioning.
 - Each block leads with a **recommendation and reasoning**, so the user can pick the whole recommended set in one word or override individual blocks.
-- Keep the menu coherent: show how a choice in one block plays with the others (this name + this voice + this visual), so the single pass is a real decision, not four disconnected lists.
+- Keep the menu coherent: show how a choice in one block plays with the others (this name + this voice + this visual), so the single pass is a real decision, not five disconnected lists.
+- Present the **experience & design standards** as a recommended set for keep/change confirmation (not N competing options) — the user ratifies or edits the defaults, and the agreed set is written to `DESIGN-STANDARDS.md` as the contract Stages 4, 5, and 8 enforce.
 - After the user picks the visual direction, surface the W3C `design-tokens.json` for confirmation before writing the file — they are the contract prototyping inherits. This token confirmation is a quick check on the chosen direction, not a re-opening of the batched gate.
 
 For a `throwaway` spike, this collapses further — a couple of token choices, or skip the gate entirely (see *Right-size by stakes*). Propose once, then stop. The user's selections are what make the brand theirs.

@@ -12,8 +12,9 @@ Read before doing anything:
 
 - `docs/product/` — the MVP sitemap and user stories. The sitemap defines *which* screens exist; the stories define *what each screen must let the user do*. Every screen you prototype must trace to one of these.
 - `docs/brand/` — design tokens and visual identity. Colors, type, spacing, components. The prototype applies these, not placeholder defaults.
+- `docs/brand/DESIGN-STANDARDS.md` — the experience & design standards confirmed in Brand (mobile-first, accessibility floor, motion, app-like navigation, component reuse, input masks, lazy + blurhash media). These are contracts: the prototype honors them, it doesn't re-litigate them.
 
-Confirm the Brand gate passed before entering. Prototyping on un-approved tokens means re-skinning everything later. If `docs/brand/` is absent or unapproved, stop and route back — don't improvise an identity here.
+Confirm the Brand gate passed before entering. Prototyping on un-approved tokens means re-skinning everything later. If `docs/brand/` or `docs/brand/DESIGN-STANDARDS.md` is absent or unapproved, stop and route back — don't improvise an identity here.
 
 ## Capability routing
 
@@ -29,6 +30,7 @@ You may mix: Figma for the visual system, a code prototype for the two flows tha
 
 **Tool wiring for this stage:**
 
+- **`/ui-ux-pro-max:ui-ux-pro-max` — mandatory for any visual/design work** (same as Brand). Route every screen and component through it for refined, polished output; recommend installing it if absent, else degrade to `frontend-design` and note it in `PROTOTYPE.md`.
 - **Figma** — go through the `figma-generate-design` skill to build screens in Figma from the scope + tokens (design-to-Figma). Any `use_figma` / `generate_figma_design` call is mediated by the `figma-use` / `figma-generate-design` skills — loading the relevant skill is a mandatory prerequisite, never call those MCP tools raw. Use this path to assemble screens section-by-section from the brand tokens rather than hardcoded values.
 - **Code (React)** — use the `frontend-design` skill for a high-fidelity, navigable prototype. This is the path when interaction fidelity matters or when you want the prototype to become a build reference with real components.
 - **Playwright MCP** — to capture and validate the states of a code prototype: navigate the running prototype, drive each screen into its empty/loading/error/success state, and screenshot for the exports folder.
@@ -81,6 +83,8 @@ Artifacts in English, regardless of conversation language.
 - [ ] Tool and fidelity chosen, with rationale recorded in PROTOTYPE.md.
 - [ ] All MVP screens from the sitemap prototyped.
 - [ ] Brand identity and tokens applied — no placeholder styling.
+- [ ] Experience & design standards from `docs/brand/DESIGN-STANDARDS.md` honored — mobile-first layout, accessibility floor (incl. ≥16px inputs, contrast, focus, `prefers-reduced-motion`), app-like motion/navigation (transitions may be CSS-stubbed for a code prototype — library wiring deferred to Stage 5), input masks on convenient fields, lazy + blurhash media, skeleton loaders / optimistic UI, `font-display: swap` + font preload, component reuse/consistency across screens, theming via tokens (dark mode if in scope), a single consistent iconography set, PWA installability if scoped, and i18n-ready layout and copy.
+- [ ] Any visual/design work routed through `ui-ux-pro-max` (or the degraded fallback noted).
 - [ ] Relevant states (empty / loading / error / success) covered per screen, with non-applicable states noted.
 - [ ] Main flows navigable end to end.
 - [ ] Every user story validated against a screen + state.
