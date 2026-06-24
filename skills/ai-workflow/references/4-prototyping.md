@@ -33,7 +33,7 @@ You may mix: Figma for the visual system, a code prototype for the two flows tha
 
 **Tool wiring for this stage:**
 
-- **`/ui-ux-pro-max:ui-ux-pro-max` — mandatory for any visual/design work** (same as Brand). Route every screen and component through it for refined, polished output; recommend installing it if absent, else degrade to `frontend-design` and note it in `PROTOTYPE.md`.
+- **`/ui-ux-pro-max:ui-ux-pro-max` — mandatory for any visual/design work** (same as Brand). Route every screen and component through it for refined, polished output; recommend installing it if absent, else degrade to `frontend-design` and note it in `PROTOTYPE.md`. When matching a screen or component to a reference image, reuse the design-extraction skill from Brand (see `references/3-brand.md`) to read the reference's design values rather than eyeballing them.
 - **Figma** — go through the `figma-generate-design` skill to build screens in Figma from the scope + tokens (design-to-Figma). Any `use_figma` / `generate_figma_design` call is mediated by the `figma-use` / `figma-generate-design` skills — loading the relevant skill is a mandatory prerequisite, never call those MCP tools raw. Use this path to assemble screens section-by-section from the brand tokens rather than hardcoded values.
 - **Code (React)** — use the `frontend-design` skill for a high-fidelity, navigable prototype. This is the path when interaction fidelity matters or when you want the prototype to become a build reference with real components.
 - **Playwright MCP** — to capture and validate the states of a code prototype: navigate the running prototype, drive each screen into its empty/loading/error/success state, and screenshot for the exports folder.

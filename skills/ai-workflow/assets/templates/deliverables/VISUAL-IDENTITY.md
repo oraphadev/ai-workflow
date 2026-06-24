@@ -79,7 +79,7 @@ Each color has a **role**, not just a hex. Implement exact values in `design-tok
 ## 8. Mood & references
 
 - Mood: `<one line>`
-- References: `<links or named examples and what to borrow from each>`
+- References: `<links or named examples and what to borrow from each — and, where design was extracted from reference images via a design-extraction skill, which values came from which reference>`
 
 ---
 
