@@ -13,7 +13,7 @@ You are not "writing the app" in one long session. You are running a loop, many 
 Everything from Stages 1–7 converges here — this is the stage that consumes all of it:
 
 - `docs/product/` — the user stories and MVP→v1 phasing that order the build. For an **AI-native** product, this is also where the **eval-set / golden-set** lives (defined in Scope/PRD), which the offline-eval gate runs against before deploy.
-- `docs/prototype/` — the screens and flows each vertical slice realizes.
+- `docs/prototype/` — the screens and flows each vertical slice realizes, **and its component inventory (the arsenal) — the reusable components the build composes from rather than reinventing.**
 - `docs/brand/` — design tokens to wire into the foundation (not re-decide), **and `DESIGN-STANDARDS.md` — the experience & design standards the build must honor** (mobile-first, accessibility floor, motion, app-like navigation, component reuse, input masks, lazy + blurhash media).
 - `docs/stack/` — the chosen frameworks, runtime, and deploy target.
 - `docs/instrumentation/` — the live services and the complete `.env` features call at runtime.
@@ -78,7 +78,7 @@ Sequence the work so there is always something live and the risky/foundational p
 - **Layout** — the app shell, navigation, and routing skeleton.
 - **Design tokens** — `docs/brand/` tokens wired into the styling system, so features inherit the look rather than reinventing it.
 - **Motion & navigation primitives** — wire the motion/navigation libraries reconciled at Stack (framer-motion + Swup.js or their agreed equivalents — see `docs/brand/DESIGN-STANDARDS.md` §3–4 for the confirmed library) and the shared animation tokens (`duration`/`easing`), plus the reusable component primitives, so every slice inherits the app-like feel and reuses components rather than reinventing them.
-- **Base infra** — database connection and the first migration, env loading from `.env`, error tracking, the shared component primitives.
+- **Base infra** — database connection and the first migration, env loading from `.env`, error tracking, the shared component primitives **seeded from the prototype's component inventory (the arsenal), so features compose existing components rather than reinventing them.**
 - **CI deploy** — confirmed green and actually deploying (this came live in Stage 7; verify it still is).
 
 **Deploy on day 1.** For greenfield `mvp` and `platform` projects this is the default: the walking skeleton — auth, an empty shell, one trivial authenticated page — goes to the live environment on the first day, before any feature. This forces the deploy path to be real early, when it is cheap to fix, and gives every subsequent slice a true target to ship to. But "live from day 1" is not a blanket rule. For a brownfield app with live users, or a regulated product without the right gates in place, you don't push to production on day 1 — there, the bar becomes **shippable/releasable**: each slice is built to a deploy-ready, gated state and released deliberately rather than auto-live. Read the stakes and the context (see *Flex by stakes*) and pick the right reading of deploy-first for the project in front of you.
